@@ -1,6 +1,8 @@
 from pathlib import Path
 
 import pytest
+import rasterio
+from rasterio.transform import from_origin
 
 from moonsight.data.downloader import (
     _has_tiff_header,
@@ -8,12 +10,12 @@ from moonsight.data.downloader import (
 )
 
 
-@pytest.mark.parametrize("header", [b"II*\x00", b"MM\x00*"])
+@pytest.mark.parametrize("header", [b"II*\\x00", b"MM\\x00*"])
 def test_accepts_classic_tiff_headers(header):
     assert _has_tiff_header(header)
 
 
-@pytest.mark.parametrize("header", [b"", b"HTML", b"PK\x03\x04", b"II+\x00"])
+@pytest.mark.parametrize("header", [b"", b"HTML", b"PK\\x03\\x04", b"II+\\x00"])
 def test_rejects_non_tiff_headers(header):
     assert not _has_tiff_header(header)
 
@@ -29,3 +31,29 @@ def test_inspector_rejects_html_error_page(tmp_path: Path):
 def test_inspector_rejects_missing_file(tmp_path: Path):
     with pytest.raises(FileNotFoundError):
         inspect_lola_geotiff(tmp_path / "missing.tif")
+
+
+def test_inspector_reads_valid_five_metre_geotiff(tmp_path: Path):
+    raster_path = tmp_path / "synthetic-test.tif"
+    with rasterio.open(
+        raster_path,
+        "w",
+        driver="GTiff",
+        width=4,
+        height=3,
+        count=1,
+        dtype="float32",
+        crs="EPSG:3031",
+        transform=from_origin(100.0, 200.0, 5.0, 5.0),
+    ) as dataset:
+        dataset.write([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]], 1)
+
+    metadata = inspect_lola_geotiff(raster_path)
+
+    assert metadata.width == 4
+    assert metadata.height == 3
+    assert metadata.band_count == 1
+    assert metadata.pixel_width == 5.0
+    assert metadata.pixel_height == 5.0
+    assert metadata.crs == "EPSG:3031"
+    assert metadata.data_type == "float32"
