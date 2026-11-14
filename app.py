@@ -4,6 +4,7 @@ import streamlit as st
 
 from moonsight.catalog import LOLA_STUDY_SITES
 from moonsight.data.downloader import download_lola_geotiff
+from moonsight.data.summary import summarize_lola_raster
 
 st.set_page_config(
     page_title="MoonSight | Lunar Landing Site Navigator",
@@ -25,8 +26,9 @@ st.markdown(
 MoonSight helps users explore documented lunar south-pole study regions using
 NASA terrain evidence and, in later phases, Sun/Earth viewing geometry.
 
-The current data workflow can retrieve one NASA LOLA GeoTIFF and inspect its
-metadata. It does not yet calculate site suitability.
+The current workflow can retrieve a NASA LOLA GeoTIFF, inspect its metadata,
+and calculate descriptive statistics from a bounded raster sample. It does not
+yet calculate site suitability.
 """
 )
 
@@ -58,22 +60,28 @@ st.caption(
     "has a TIFF header and Rasterio confirms its CRS and approximately 5 m pixels."
 )
 
-if st.button("Download and validate NASA data", type="primary"):
+if st.button("Download and inspect NASA data", type="primary"):
     with st.spinner("Retrieving and validating the NASA LOLA GeoTIFF..."):
         try:
-            metadata = download_lola_geotiff(
-                site_options[selected_label],
-                product_labels[selected_product_label],
-            )
+            selected_site_id = site_options[selected_label]
+            selected_product = product_labels[selected_product_label]
+            metadata = download_lola_geotiff(selected_site_id, selected_product)
+            sample_summary = summarize_lola_raster(metadata.path, selected_product)
         except Exception as exc:
             st.error(f"Data retrieval or validation failed: {exc}")
         else:
-            st.success("The GeoTIFF was downloaded and passed the current metadata checks.")
+            st.success("The GeoTIFF passed the current file and metadata checks.")
             st.subheader("Raster metadata")
             st.json(metadata.to_dict())
+            st.subheader("Sampled pixel statistics")
+            st.caption(
+                "These statistics describe a bounded, nearest-neighbour sample "
+                "of the raster—not every pixel in the complete study region."
+            )
+            st.json(sample_summary.to_dict())
             st.warning(
-                "Metadata validation is not a scientific quality assessment. "
-                "No terrain interpretation or landing-safety conclusion is produced."
+                "These are descriptive data checks, not a scientific quality "
+                "assessment or a landing-safety conclusion."
             )
 
 st.divider()
@@ -90,7 +98,8 @@ st.markdown(
 - [x] Repository and Python package foundation
 - [x] NASA LOLA product URL registry
 - [x] Bounded GeoTIFF download and metadata validation workflow
-- [ ] Execute automated tests and verify a real NASA download
+- [x] Bounded raster sample statistics
+- [ ] Run tests from the GitHub checkout and verify a real NASA download
 - [ ] JPL Horizons request and response validation
 - [ ] Sun/Earth geometry calculations
 - [ ] Terrain-aware visibility analysis
