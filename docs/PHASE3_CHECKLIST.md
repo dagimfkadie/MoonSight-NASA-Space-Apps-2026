@@ -37,7 +37,7 @@ The Site04 elevation filename is `Site04_final_adj_5mpp_surf.tif`. The official 
 - Enforce a configurable maximum download size (default 512 MiB).
 - Download to a temporary file and move it into the cache only after validation.
 - Require Rasterio to open the file.
-- Require a projected coordinate reference system with metre units.
+- Require a projected coordinate reference system with metre units. This generic check does not by itself verify the exact lunar projection or MOON_ME/DE421 reference frame; that must be checked against the real file metadata and NASA documentation.
 - Require positive raster dimensions.
 - Check for approximately 5 m pixels before accepting the file.
 - Record file path, dimensions, band count, CRS, pixel size, bounds, data type, and NoData value.
@@ -45,6 +45,10 @@ The Site04 elevation filename is `Site04_final_adj_5mpp_surf.tif`. The official 
 - Exclude NoData and non-finite values from sample statistics.
 - Label all sample statistics clearly; they are not full-raster summaries or landing criteria.
 - Do not interpret metadata validation as proof of terrain quality or landing suitability.
+
+## Coordinate-reference wording correction
+
+The current downloader checks only that the raster CRS is projected and uses metres. It does **not** yet compare the CRS definition with the exact lunar south-polar stereographic / MOON_ME / DE421 reference information described by NASA. The app therefore labels map axes as projected coordinates and explicitly tells users to inspect the CRS metadata; it does not claim the frame has been independently verified. The synthetic tests use EPSG:3031 only as a generic projected-metre test CRS, not as a lunar CRS.
 
 ## Additional engineering correction
 
