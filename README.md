@@ -24,11 +24,11 @@ At this stage, the repository foundation is being prepared. Features must not be
 - Provide interactive plots and clearly labeled data exports.
 - Document data provenance, assumptions, uncertainty, and limitations.
 
-## Planned technology
+## Technology
 
-Python, Streamlit, NumPy, Pandas, Rasterio, Plotly, and Requests. Dependencies will be finalized when the data and calculation workflows are implemented.
+Python, Streamlit, NumPy, Pandas, Rasterio, Plotly, and Requests. Development tools include pytest and Ruff.
 
-## Planned project layout
+## Project layout
 
 ```text
 app.py
@@ -41,10 +41,48 @@ src/moonsight/
   visualization/
 tests/
 docs/
-assets/
 ```
 
-The structure may be adjusted when implementation needs are established.
+## Setup and run
+
+Use Python 3.10 or newer.
+
+1. Clone this repository and open a terminal in the project folder.
+2. Create and activate a virtual environment:
+
+   **Windows (PowerShell):**
+   ```powershell
+   python -m venv .venv
+   .venv\\Scripts\\Activate.ps1
+   ```
+
+   **macOS / Linux:**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+3. Install the project and development tools:
+
+   ```bash
+   python -m pip install --upgrade pip
+   python -m pip install -e ".[dev]"
+   ```
+
+4. Start the Streamlit application:
+
+   ```bash
+   streamlit run app.py
+   ```
+
+5. Run the automated checks:
+
+   ```bash
+   pytest
+   ruff check .
+   ```
+
+These are setup instructions, not evidence that the commands have already been run successfully. Record actual results in the project checklist. Rasterio installation may depend on the Python version and operating-system environment.
 
 ## Data sources under evaluation
 
@@ -54,11 +92,7 @@ The structure may be adjusted when implementation needs are established.
 - NASA lunar polar illumination and Earth visibility resources: https://pgda.gsfc.nasa.gov/products/69
 - NASA Lunar Surface Data Book: https://ntrs.nasa.gov/citations/20250002845
 
-A source is not considered integrated merely because it is listed here. Product identifiers, coordinate conventions, resolution, units, access conditions, and challenge eligibility must be verified and documented before use.
-
-## Development
-
-Implementation and testing instructions will be added alongside the application code. Do not install dependencies or expect an application to run until those files are committed.
+NASA's LOLA south-pole archive documents elevation, slope, and uncertainty GeoTIFF products at 5 m/pixel for its listed study regions. Before using a file, verify its actual download, metadata, coordinate reference, units, and data quality. A source is not considered integrated merely because it is listed here.
 
 ## Competition compliance
 
@@ -70,8 +104,8 @@ Implementation and testing instructions will be added alongside the application 
 - Do not claim NASA endorsement or affiliation.
 - Do not claim a calculation or feature is validated without evidence.
 
-See [docs/PHASE1_CHECKLIST.md](docs/PHASE1_CHECKLIST.md) for the foundation checklist.
+See [docs/PHASE1_CHECKLIST.md](docs/PHASE1_CHECKLIST.md) and [docs/PHASE2_CHECKLIST.md](docs/PHASE2_CHECKLIST.md) for development status.
 
 ## License
 
-A `LICENSE` file is present in this repository, but the team must review and agree on the license before treating it as the final project licensing decision. Third-party data and software may have separate terms; see the official NASA Space Apps participant terms and the project references before submission.
+The team has agreed to use the MIT License for original project code; see [LICENSE](LICENSE). NASA datasets, third-party software, and other external materials may have separate terms. The MIT license on this repository does not automatically relicense those materials.
