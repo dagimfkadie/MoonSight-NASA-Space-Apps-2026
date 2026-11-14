@@ -1,5 +1,4 @@
 import pytest
-
 from moonsight.data.lola import build_lola_product_url
 
 
