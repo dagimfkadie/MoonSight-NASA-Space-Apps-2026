@@ -1,12 +1,10 @@
-"""Download and validate NASA LOLA GeoTIFF products.
-
-Downloads are cached locally and checked before being accepted. The module does
-not interpret the raster as a landing-safety certification.
-"""
+"""Download and validate NASA LOLA GeoTIFF products with provenance metadata."""
 
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
+from hashlib import sha256
 from pathlib import Path
 import os
 import tempfile
@@ -23,13 +21,19 @@ TIFF_HEADERS = (bytes.fromhex("49492a00"), bytes.fromhex("4d4d002a"))
 
 @dataclass(frozen=True, slots=True)
 class RasterMetadata:
-    """Small, serializable summary of a validated raster file."""
+    """Raster inspection results plus a reproducible local-file provenance record."""
 
     path: str
+    source_url: str | None
+    retrieved_at_utc: str
+    file_size_bytes: int
+    sha256: str
     width: int
     height: int
     band_count: int
     crs: str
+    crs_wkt: str
+    transform: tuple[float, float, float, float, float, float]
     pixel_width: float
     pixel_height: float
     bounds: tuple[float, float, float, float]
@@ -46,8 +50,27 @@ def _has_tiff_header(header: bytes) -> bool:
     return any(header.startswith(signature) for signature in TIFF_HEADERS)
 
 
-def inspect_lola_geotiff(path: str | Path) -> RasterMetadata:
-    """Open a raster with Rasterio and verify basic LOLA archive expectations."""
+def _sha256_file(path: Path) -> str:
+    """Calculate a file checksum without loading the complete raster into memory."""
+    digest = sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def inspect_lola_geotiff(
+    path: str | Path,
+    *,
+    source_url: str | None = None,
+    retrieved_at_utc: str | None = None,
+) -> RasterMetadata:
+    """Inspect a GeoTIFF and check basic archive expectations.
+
+    This validates a projected metre-based grid with approximately 5 m pixels.
+    It deliberately does not claim that a generic projected CRS matches NASA's
+    complete MOON_ME / DE421 lunar reference definition.
+    """
     file_path = Path(path)
     if not file_path.is_file():
         raise FileNotFoundError(file_path)
@@ -57,6 +80,12 @@ def inspect_lola_geotiff(path: str | Path) -> RasterMetadata:
     if not _has_tiff_header(header):
         raise ValueError("Downloaded file does not have a valid TIFF header.")
 
+    stat = file_path.stat()
+    timestamp = retrieved_at_utc or datetime.fromtimestamp(
+        stat.st_mtime, tz=timezone.utc
+    ).isoformat()
+    checksum = _sha256_file(file_path)
+
     try:
         with rasterio.open(file_path) as dataset:
             if dataset.width <= 0 or dataset.height <= 0 or dataset.count < 1:
@@ -64,9 +93,8 @@ def inspect_lola_geotiff(path: str | Path) -> RasterMetadata:
             if dataset.crs is None:
                 raise ValueError("Raster is missing its coordinate reference system.")
             if not dataset.crs.is_projected:
-                raise ValueError(
-                    "Expected a projected coordinate reference system."
-                )
+                raise ValueError("Expected a projected coordinate reference system.")
+
             linear_units = (dataset.crs.linear_units or "").lower()
             if linear_units not in {"metre", "meter", "metres", "meters"}:
                 raise ValueError(
@@ -82,12 +110,19 @@ def inspect_lola_geotiff(path: str | Path) -> RasterMetadata:
                     f"received {pixel_width:g} x {pixel_height:g}."
                 )
 
+            transform = tuple(float(value) for value in dataset.transform[:6])
             return RasterMetadata(
                 path=str(file_path),
+                source_url=source_url,
+                retrieved_at_utc=timestamp,
+                file_size_bytes=stat.st_size,
+                sha256=checksum,
                 width=dataset.width,
                 height=dataset.height,
                 band_count=dataset.count,
                 crs=dataset.crs.to_string(),
+                crs_wkt=dataset.crs.to_wkt(),
+                transform=transform,
                 pixel_width=pixel_width,
                 pixel_height=pixel_height,
                 bounds=(
@@ -127,7 +162,7 @@ def download_lola_geotiff(
 
     if destination.exists():
         try:
-            return inspect_lola_geotiff(destination)
+            return inspect_lola_geotiff(destination, source_url=url)
         except (OSError, ValueError):
             destination.unlink(missing_ok=True)
 
@@ -175,19 +210,17 @@ def download_lola_geotiff(
         if bytes_written == 0:
             raise ValueError("NASA returned an empty file.")
 
-        metadata = inspect_lola_geotiff(temporary_path)
+        retrieved_at = datetime.now(timezone.utc).isoformat()
+        inspect_lola_geotiff(
+            temporary_path,
+            source_url=url,
+            retrieved_at_utc=retrieved_at,
+        )
         temporary_path.replace(destination)
-        return RasterMetadata(
-            path=str(destination),
-            width=metadata.width,
-            height=metadata.height,
-            band_count=metadata.band_count,
-            crs=metadata.crs,
-            pixel_width=metadata.pixel_width,
-            pixel_height=metadata.pixel_height,
-            bounds=metadata.bounds,
-            data_type=metadata.data_type,
-            nodata=metadata.nodata,
+        return inspect_lola_geotiff(
+            destination,
+            source_url=url,
+            retrieved_at_utc=retrieved_at,
         )
     finally:
         if temporary_path is not None:
