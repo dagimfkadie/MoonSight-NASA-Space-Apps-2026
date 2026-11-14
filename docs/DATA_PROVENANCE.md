@@ -2,7 +2,7 @@
 
 This document records the external datasets and services used by MoonSight, how the current code requests them, and what the application does (and does not) validate. It is intended to make the origin and interpretation of displayed information traceable.
 
-**Status:** Repository-level documentation of implemented data-access paths. A documented source or code path is not proof that a live download/query has been completed successfully in the current environment.
+**Status:** One live NASA LOLA Site04 elevation GeoTIFF retrieval has been completed and evidenced by GitHub Actions run [#43591846379](https://github.com/dagimfkadie/MoonSight-NASA-Space-Apps-2026/actions/runs/43591846379). This is a single-file retrieval and raster-open check, not validation of every product or the complete lunar reference frame. The live JPL Horizons path has not yet been independently verified.
 
 ## 1. Source register
 
@@ -76,6 +76,14 @@ The data-access path is:
 6. Raster metadata is returned to the application for display and subsequent processing.
 
 The downloader uses a timeout and does not intentionally leave a partial download at the final cache path. The default maximum file size is a software safeguard, not a NASA archive limit.
+
+### Live retrieval evidence — Site04 elevation
+
+On November 14, 2026, GitHub Actions run [#43591846379](https://github.com/dagimfkadie/MoonSight-NASA-Space-Apps-2026/actions/runs/43591846379) successfully downloaded and opened the NASA archive file `Site04_final_adj_5mpp_surf.tif` using Rasterio. The workflow uploaded the original TIFF and `nasa-lola-verification.json` in artifact `nasa-lola-site04-verification` (artifact ID `14113230067`).
+
+The report records 3,200 × 3,200 pixels, one Float32 band, 5 m × 5 m pixel spacing, 40,980,806 bytes, and SHA-256 `38ff70dbdf2f066c2cfa94a646c3a59d653ce7f6b4528b15fc1b43ee397ce758`. The reported CRS is unnamed polar stereographic, with a 1,737,400 m sphere and -90° latitude of origin. It is not explicitly labelled MOON_ME / DE421, so exact reference-frame identity remains unverified. The workflow artifact expires November 28, 2026.
+
+This evidence establishes successful retrieval and raster readability for this one file only. It does not prove that the Streamlit app has been launched against this file, validate all six site groups or five product types, or establish scientific suitability.
 
 ### Metadata currently retained for display
 
