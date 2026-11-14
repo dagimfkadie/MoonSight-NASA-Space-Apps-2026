@@ -79,17 +79,16 @@ The downloader uses a timeout and does not intentionally leave a partial downloa
 
 ### Metadata currently retained for display
 
-The `RasterMetadata` record includes:
-- Local cached path
-- Raster width and height
-- Band count
-- CRS string as reported by Rasterio
-- Pixel width and height
-- Raster bounds
-- Data type
-- NoData value
+The `RasterMetadata` record now includes:
+- Local cached path and original NASA source URL
+- File modification timestamp in UTC (not represented as an authoritative provider timestamp)
+- File size and SHA-256 checksum, calculated incrementally without loading the full raster into memory
+- Raster width and height and band count
+- CRS identifier/string and full CRS WKT as reported by Rasterio
+- Affine transform, pixel width/height and raster bounds
+- Data type and NoData value
 
-The current metadata record does not preserve a complete provider-side provenance manifest, download timestamp, HTTP ETag/Last-Modified headers, checksum, or full CRS WKT. Those would be useful additions for a reproducible release.
+The application displays this metadata and offers a JSON provenance-manifest download. The NASA source GeoTIFF is also linked directly from the terrain result. The checksum identifies the local file contents; it does not independently prove the file's scientific correctness. The application still does not persist original HTTP ETag/Last-Modified headers or independently verify that the full CRS WKT is the expected MOON_ME / DE421 definition.
 
 ## 4. Raster sampling and derived summaries
 
