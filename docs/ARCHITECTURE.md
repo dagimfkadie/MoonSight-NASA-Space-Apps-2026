@@ -2,97 +2,72 @@
 
 ## Architectural goals
 
-- Keep the user interface separate from scientific calculations.
-- Keep source data provenance attached to every data workflow.
+- Separate the interface from data retrieval and scientific calculations.
+- Preserve source provenance and coordinate/time metadata.
 - Reject malformed inputs and invalid measurements rather than inventing defaults.
-- Make numerical functions independently testable.
-- Clearly distinguish measured/source data, derived values, and illustrative graphics.
+- Keep numerical functions independently testable.
+- Distinguish source observations/products, derived values and illustrative visualizations.
 
-## Application layers
+## Layers
 
-### Presentation: `app.py`
+### Presentation — `app.py`
 
-Streamlit entry point. It displays the application status and calls package services. It must not contain scientific formulas or silently fabricate data.
+Streamlit interface with four tabs: Terrain Explorer, Compare Regions, Sun & Earth Geometry, and Data & Limitations. The interface orchestrates service calls and displays assumptions and caveats; calculations belong in package modules.
 
-### Domain catalog: `moonsight.catalog`
+### Catalog — `moonsight.catalog`
 
-Contains source-verified study-region identifiers and labels. Coordinates are deliberately excluded until their definitions and coordinate frames are verified from authoritative metadata.
+Contains six source-listed NASA LOLA study-region identifiers and names. It deliberately does not invent geographic coordinates for these regions.
 
-### Data access: `moonsight.data`
+### Data access — `moonsight.data`
 
-Future responsibilities:
-- Construct and validate source URLs.
-- Retrieve NASA/JPL responses with timeouts and clear error handling.
-- Cache successful responses using source URL and request parameters as cache keys.
-- Record retrieval time, source, product identifier, units, coordinate reference, and version where available.
+- `lola.py`: builds URLs for known NASA LOLA product types.
+- `downloader.py`: bounded HTTP download, temporary-file handling, caching and basic GeoTIFF validation.
+- `summary.py`: bounded nearest-neighbour raster sample statistics.
 
-### Terrain: `moonsight.terrain`
+### Terrain — `moonsight.terrain`
 
-Future responsibilities:
-- Open LOLA GeoTIFF products with Rasterio.
-- Read CRS, transform, dimensions, pixel registration, nodata and units.
-- Mask nodata and non-finite pixels.
-- Report valid-pixel coverage and descriptive statistics.
-- Keep source resolution separate from any downsampled display resolution.
+- `preview.py`: bounded single-band raster preview, NoData masking, projected coordinate axes, 2-D heatmap and 3-D surface rendering.
+- The 3-D surface is intended for elevation products only. It is a downsampled visualization, not a terrain hazard model.
 
-### Astronomy: `moonsight.astronomy`
+### Astronomy — `moonsight.astronomy`
 
-Future responsibilities:
-- Build documented JPL Horizons observer requests.
-- Parse API version, error messages, time tags, azimuth and elevation.
-- Validate the observer location and coordinate conventions.
-- Preserve the exact query settings with returned data.
+- `horizons.py`: constructs JPL Horizons observer requests for the Sun and Earth from a user-entered lunar geodetic coordinate; validates inputs and API signature; parses apparent azimuth/elevation output.
+- Coordinates are not inferred from LOLA tile IDs.
+- Live request verification and independent comparison against the Horizons interface remain outstanding.
 
-### Visibility: `moonsight.visibility`
+### Comparison
 
-Future responsibilities:
-- Determine geometric visibility relative to a defined local horizon.
-- Add terrain obstruction only when a suitable, correctly registered terrain profile is available.
-- Keep geometric line-of-sight separate from radio-frequency link feasibility.
+The UI compares bounded descriptive statistics for the same LOLA product across two selected regions. It does not calculate a weighted score, infer suitability or rank sites.
 
-### Comparison: `moonsight.comparison`
+### Visibility and communications
 
-Future responsibilities:
-- Compare like-for-like products, dates, units, resolutions and spatial footprints.
-- Display evidence and limitations side by side.
-- Avoid unsupported weighted scores or claims of landing safety.
-
-### Visualization: `moonsight.visualization`
-
-Future responsibilities:
-- Render maps and plots with units, legends, source attribution and clear missing-data handling.
-- Make clear whether a view is full resolution, resampled, or illustrative.
+No terrain-aware horizon ray tracing or radio link-budget model is implemented. Horizons elevation is only a geometric direction indicator. These future modules must not be presented as complete.
 
 ## Data flow
 
-1. User selects a documented study region, product, and date.
-2. Input validation checks supported choices and coordinate definitions.
-3. Data service retrieves the original NASA/JPL response.
-4. Domain modules validate source metadata and calculate derived quantities.
-5. Tests and quality checks run before results are exposed.
-6. Presentation displays results with provenance and limitations.
+1. User selects a LOLA archive region and product, or enters a lunar observer coordinate and date.
+2. Input validation checks allowed product IDs, coordinate ranges and request duration.
+3. Data service retrieves NASA LOLA GeoTIFFs or JPL Horizons JSON.
+4. Domain modules validate metadata and calculate bounded summaries or parse apparent observer directions.
+5. Tests and quality checks are run before release.
+6. UI presents values with units, provenance, assumptions and limitations.
 
-## Current implementation boundary
+## Coordinate and data integrity
 
-The initial foundation contains the Streamlit shell, a source-cited list of six NASA LOLA study-region labels, package directories, and catalog tests. It does not yet retrieve NASA data or calculate astronomy, terrain, or visibility results.
+NASA describes the South Pole Landing Site LOLA GeoTIFFs as 5 m/pixel, south-polar stereographic X/Y coordinates in metres, MOON_ME reference frame, ephemeris DE421. The current downloader only checks projected CRS, metre units and approximately 5 m pixels. It does not yet verify that the exact CRS WKT and lunar frame match NASA's complete specification.
 
-## NASA LOLA source characteristics
+NASA archive: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/
 
-NASA's South Pole Landing Site LOLA DEM archive describes 5 m/pixel GeoTIFF products, with south-polar stereographic X/Y coordinates in metres and a MOON_ME reference frame tied to ephemeris DE421. Product groups include elevation, slope, return counts, and uncertainty layers. The exact metadata of each downloaded file must still be inspected before processing.
+## JPL Horizons
 
-Source: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/
+Horizons API: https://ssd-api.jpl.nasa.gov/doc/horizons.html
 
-## JPL Horizons integration
+The client requests observer-table quantity 4 (apparent azimuth/elevation) using a lunar surface observer coordinate with `CENTER=coord@301`, geodetic coordinate order east longitude, latitude, altitude in kilometres, and airless output. The user must provide a documented lunar coordinate. The app must not treat a default input as a known study-region coordinate.
 
-Horizons observer ephemerides can provide apparent azimuth and elevation when configured for a topocentric observer. The implementation must verify the observer-center and coordinate options supported for a lunar surface site. Earth-based defaults must not be reused for lunar observers.
+## Known limitations
 
-API documentation: https://ssd-api.jpl.nasa.gov/doc/horizons.html
-
-## Error handling
-
-- Network timeout: show source and retry guidance; do not show stale values as current.
-- API error response: surface the returned error safely.
-- Missing raster: identify the requested product and source URL.
-- Invalid raster metadata: stop analysis and report the mismatch.
-- Missing pixels: mask and report coverage; never replace missing values with zero.
-- Unsupported coordinate system: stop rather than guessing a transformation.
+- Live NASA GeoTIFF download and exact lunar CRS metadata verification remain pending.
+- Live JPL Horizons requests and comparison against an independently configured Horizons query remain pending.
+- The 2-D/3-D views use bounded samples, not full-resolution display.
+- No terrain obstruction, illumination duration, available solar power, radio link budget, or landing-safety model is implemented.
+- A successful API request or attractive plot is not independent scientific validation.
