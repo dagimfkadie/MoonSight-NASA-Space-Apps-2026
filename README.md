@@ -21,12 +21,9 @@ The Horizons coordinates are explicitly user-entered. The app does not invent la
 
 ## Verification status
 
-- Repository foundation, data modules, Streamlit UI, and tests are committed.
-- Focused synthetic terrain tests and isolated raster-summary checks were previously recorded in `docs/PHASE3_CHECKLIST.md`.
-- Horizons tests use synthetic API response fixtures and a fake HTTP session; they do not prove that a live Horizons request succeeds.
-- Synthetic tests now cover the LOLA URL mapping, mocked download/cache flow, and raster provenance fields; these new tests have not yet been executed in a clean environment.
-- The full repository test suite, Ruff, Streamlit launch, live NASA GeoTIFF retrieval, and live JPL Horizons requests still require verification in a clean environment.
-- No real NASA raster has yet been validated in this development session.
+- GitHub Actions passed for the PR head commit `f317ccfba578fc1b847f224184ec4d89f068268b` before it was merged. The workflow installs the project and development dependencies in a clean Ubuntu/Python 3.11 environment, compiles the Python sources, runs Ruff, and executes pytest, including the Streamlit AppTest startup smoke test.
+- Automated tests use synthetic rasters and mocked NASA/JPL responses. They verify software behavior, not the scientific validity of live source data or live API results.
+- Live NASA GeoTIFF retrieval, exact MOON_ME / DE421 CRS verification, live JPL Horizons requests, and independent ephemeris comparison remain unverified and should be recorded with evidence before submission.
 - No terrain-aware horizon obstruction, site ranking, or landing-safety score is implemented.
 
 ## NASA Space Apps timing
