@@ -210,18 +210,9 @@ def download_lola_geotiff(
         if bytes_written == 0:
             raise ValueError("NASA returned an empty file.")
 
-        downloaded_at = datetime.now(timezone.utc).isoformat()
-        inspect_lola_geotiff(
-            temporary_path,
-            source_url=url,
-            local_file_modified_at_utc=downloaded_at,
-        )
+        inspect_lola_geotiff(temporary_path, source_url=url)
         temporary_path.replace(destination)
-        return inspect_lola_geotiff(
-            destination,
-            source_url=url,
-            local_file_modified_at_utc=downloaded_at,
-        )
+        return inspect_lola_geotiff(destination, source_url=url)
     finally:
         if temporary_path is not None:
             temporary_path.unlink(missing_ok=True)
