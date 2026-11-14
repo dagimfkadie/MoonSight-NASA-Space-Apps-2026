@@ -186,15 +186,14 @@ Create one record per live source or independent comparison. Do not mark a recor
 
 ## 8. Current validation status
 
-The following status distinguishes automated software checks from live data and scientific validation. GitHub Actions passed for PR head `f317ccfba578fc1b847f224184ec4d89f068268b` before merge; its workflow installs dependencies in a clean Ubuntu/Python 3.11 environment, compiles sources, runs Ruff and executes the complete pytest suite, including the Streamlit AppTest startup smoke test.
+The following status distinguishes automated software checks from live data and scientific validation. GitHub Actions passed on merged `main` commit `b9e836cccc57888d206f9e2abe0040158f2eca52` (workflow run [#125](https://github.com/dagimfkadie/MoonSight-NASA-Space-Apps-2026/actions/runs/43591255469)). The clean Ubuntu/Python 3.11 workflow compiled sources, ran Ruff and completed the full pytest suite: 46 tests passed, including the Streamlit AppTest startup smoke test.
 
 | Validation item | Status |
 |---|---|
 | Synthetic TIFF inspection tests | Implemented and included in the passing CI run; does not validate lunar CRS |
-| Synthetic TIFF inspection tests | Implemented; does not validate lunar CRS |
 | Synthetic raster summary tests | Implemented and included in the passing CI run |
 | Horizons parser and fake-session request tests | Implemented and included in the passing CI run; no live-service proof |
-| Dedicated terrain preview tests | Not found at checked path |
+| Dedicated terrain preview tests | Implemented in `tests/test_terrain_preview.py` and included in the passing CI run |
 | Live NASA LOLA download evidence | Pending |
 | Exact MOON_ME / DE421 CRS verification | Pending |
 | Product-specific units and NoData metadata audit | Pending |
