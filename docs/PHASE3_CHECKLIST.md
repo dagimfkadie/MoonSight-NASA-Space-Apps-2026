@@ -11,11 +11,13 @@
 | Rasterio metadata inspection | Implemented; requires projected metre-based CRS and approximately 5 m pixels | `src/moonsight/data/downloader.py` |
 | Synthetic raster validation tests | Written; local focused CRS check passed | `tests/test_downloader.py` |
 | Bounded raster sample statistics | Implemented; three isolated tests passed | `src/moonsight/data/summary.py`, `tests/test_summary.py` |
-| Bounded terrain heatmap preview | Implemented; test cases added, full test run pending | `src/moonsight/terrain/preview.py`, `tests/test_terrain_preview.py` |
+| Bounded terrain heatmap preview | Implemented; four focused isolated tests passed; full repository suite pending | `src/moonsight/terrain/preview.py`, `tests/test_terrain_preview.py` |
 | Streamlit terrain heatmap display | Implemented; app launch pending | `app.py` |
 | Streamlit download and sample-statistics interface | Implemented; app not yet launched | `app.py` |
 
 ## Test note
+
+A focused local run of the terrain-preview logic completed with **4 tests passed** using synthetic GeoTIFFs. It covered NoData masking, pixel-centre coordinates, sample-size limits, and Plotly figure construction. The run used an isolated temporary test package mirroring the committed module; it is not a full clean-checkout test run.
 
 A local isolated test run of the raster-summary module completed with **3 tests passed** using synthetic GeoTIFF files. A separate focused check confirmed that a projected metre-based test CRS is accepted and a geographic CRS is rejected. These are targeted checks, not a complete `pytest` run from a clean clone of this repository.
 
