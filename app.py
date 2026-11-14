@@ -1,7 +1,10 @@
 """MoonSight Streamlit application: terrain evidence and lunar geometry."""
 
-from datetime import date
 import json
+from datetime import date
+
+import rasterio
+import requests
 
 import pandas as pd
 import plotly.express as px
@@ -74,7 +77,7 @@ with terrain_tab:
                 metadata = download_lola_geotiff(site_id, product)
                 summary = summarize_lola_raster(metadata.path, product)
                 preview = load_terrain_preview(metadata.path, units=units)
-            except Exception as exc:
+            except (OSError, ValueError, requests.RequestException, rasterio.errors.RasterioError) as exc:
                 st.error(f"Download or raster processing failed: {exc}")
             else:
                 st.success("The file passed MoonSight's current TIFF, projected-metre and approximate pixel-size checks.")
@@ -180,7 +183,7 @@ with compare_tab:
                                 "NoData / non-finite sampled pixels": summary.nodata_sample_count,
                             }
                         )
-            except Exception as exc:
+            except (RuntimeError, ValueError) as exc:
                 st.error(f"Comparison could not be completed: {exc}")
             else:
                 frame = pd.DataFrame(records)
@@ -265,7 +268,7 @@ with geometry_tab:
                                 "Elevation (°)": position.elevation_deg,
                             }
                         )
-        except Exception as exc:
+        except (RuntimeError, TypeError, ValueError) as exc:
             st.error(f"Horizons query failed: {exc}")
         else:
             ephemeris = pd.DataFrame(output)
