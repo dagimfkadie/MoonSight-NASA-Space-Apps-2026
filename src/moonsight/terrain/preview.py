@@ -120,3 +120,37 @@ def build_terrain_heatmap(
     )
     figure.update_yaxes(scaleanchor="x", scaleratio=1)
     return figure
+
+
+
+def build_terrain_surface(
+    preview: TerrainPreview,
+    *,
+    title: str = "Sampled elevation surface",
+) -> go.Figure:
+    """Create a 3-D surface preview; intended for elevation rasters only."""
+    figure = go.Figure(
+        data=go.Surface(
+            x=preview.x_metres,
+            y=preview.y_metres,
+            z=preview.elevation_or_product_values,
+            connectgaps=False,
+            colorbar={"title": {"text": preview.units}},
+            hovertemplate=(
+                "X: %{x:.1f} m<br>Y: %{y:.1f} m<br>"
+                "Elevation: %{z:.2f}<extra></extra>"
+            ),
+        )
+    )
+    figure.update_layout(
+        title=title,
+        scene={
+            "xaxis_title": "Projected X (m)",
+            "yaxis_title": "Projected Y (m)",
+            "zaxis_title": f"Elevation ({preview.units})",
+            "aspectmode": "data",
+        },
+        template="plotly_white",
+        height=650,
+    )
+    return figure
