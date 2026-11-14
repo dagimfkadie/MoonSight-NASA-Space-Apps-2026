@@ -6,7 +6,7 @@ This record describes AI assistance used while developing MoonSight. The team mu
 
 | Tool | Purpose | Work assisted | Human verification status |
 |---|---|---|---|
-| ChatGPT (OpenAI) | Planning, explanations, code drafting, code review suggestions and documentation | Python package design; NASA LOLA downloader and raster summaries; Plotly terrain preview; JPL Horizons client; Streamlit UI; tests; phase checklists and README | AI-generated changes were committed to GitHub. Full clean-environment tests, live data checks, and human review by every contributor remain outstanding. |
+| ChatGPT (OpenAI) | Planning, explanations, code drafting, code review suggestions and documentation | Python package design; NASA LOLA downloader and raster summaries; Plotly terrain preview; JPL Horizons client; Streamlit UI; tests; phase checklists and README | AI-generated changes were committed to GitHub. Full clean-environment tests passed in CI. One live NASA Site04 elevation GeoTIFF retrieval and raster-open check passed in GitHub Actions; exact lunar CRS validation and live JPL Horizons checks remain outstanding. Human review by every contributor remains outstanding. |
 
 ## AI-assisted files/features in this development session
 
