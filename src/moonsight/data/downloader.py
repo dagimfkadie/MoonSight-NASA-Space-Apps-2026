@@ -65,7 +65,7 @@ def inspect_lola_geotiff(path: str | Path) -> RasterMetadata:
                 raise ValueError("Raster is missing its coordinate reference system.")
             if not dataset.crs.is_projected:
                 raise ValueError(
-                    "Expected a projected south-polar stereographic coordinate system."
+                    "Expected a projected coordinate reference system."
                 )
             linear_units = (dataset.crs.linear_units or "").lower()
             if linear_units not in {"metre", "meter", "metres", "meters"}:
