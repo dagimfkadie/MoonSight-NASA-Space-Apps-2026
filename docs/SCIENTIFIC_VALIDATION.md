@@ -57,7 +57,7 @@ For each selected NASA GeoTIFF, record and independently compare:
 - Data type, units, scale/offset, NoData value and mask behavior.
 - Provider documentation and retrieval timestamp.
 
-NASA's South Pole archive describes the products as 5 m/pixel south-polar stereographic GeoTIFFs with X/Y in metres, MOON_ME reference frame and DE421 ephemeris. The current code only checks projected CRS, metre units and pixel dimensions within 4–6 m. It does not yet verify the full lunar CRS definition. This is a known validation gap.
+NASA's South Pole archive describes the products as 5 m/pixel south-polar stereographic GeoTIFFs with X/Y in metres, MOON_ME reference frame and DE421 ephemeris. The current code only checks projected CRS, metre units and pixel dimensions within 4–6 m. It does not yet verify the full lunar CRS definition. This is a known validation gap. The provenance timestamp is the local file modification time, not a NASA server-side modification timestamp; record the UTC retrieval time separately when collecting live evidence.
 
 ### 3.2 File integrity and retrieval
 
@@ -190,10 +190,10 @@ The following status distinguishes automated software checks from live data and 
 
 | Validation item | Status |
 |---|---|
+| Synthetic TIFF inspection tests | Implemented and included in the passing CI run; does not validate lunar CRS |
 | Synthetic TIFF inspection tests | Implemented; does not validate lunar CRS |
-| Synthetic TIFF inspection tests | Implemented; does not validate lunar CRS |
-| Synthetic raster summary tests | Implemented |
-| Horizons parser and fake-session request tests | Implemented; no live-service proof |
+| Synthetic raster summary tests | Implemented and included in the passing CI run |
+| Horizons parser and fake-session request tests | Implemented and included in the passing CI run; no live-service proof |
 | Dedicated terrain preview tests | Not found at checked path |
 | Live NASA LOLA download evidence | Pending |
 | Exact MOON_ME / DE421 CRS verification | Pending |
