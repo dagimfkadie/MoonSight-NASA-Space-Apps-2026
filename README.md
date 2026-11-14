@@ -24,6 +24,7 @@ The Horizons coordinates are explicitly user-entered. The app does not invent la
 - GitHub Actions passed for the PR head commit `f317ccfba578fc1b847f224184ec4d89f068268b` before it was merged. The workflow installs the project and development dependencies in a clean Ubuntu/Python 3.11 environment, compiles the Python sources, runs Ruff, and executes pytest, including the Streamlit AppTest startup smoke test.
 - Automated tests use synthetic rasters and mocked NASA/JPL responses. They verify software behavior, not the scientific validity of live source data or live API results.
 - Live NASA GeoTIFF retrieval, exact MOON_ME / DE421 CRS verification, live JPL Horizons requests, and independent ephemeris comparison remain unverified and should be recorded with evidence before submission.
+- Provenance JSON reports the local file modification timestamp; it is not a NASA server-side modification timestamp.
 - No terrain-aware horizon obstruction, site ranking, or landing-safety score is implemented.
 
 ## NASA Space Apps timing
