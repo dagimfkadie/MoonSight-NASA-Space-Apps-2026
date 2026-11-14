@@ -26,7 +26,7 @@
 ## Validation still required
 
 - [x] Add a Streamlit AppTest startup smoke test to the automated suite.
-- [ ] Install the app in a clean environment and launch Streamlit; execute the new smoke test in CI.
+- [ ] Run the complete automated test suite and Ruff.
 - [ ] Test all four tabs in a browser.
 - [ ] Test a real NASA raster download and 2-D/3-D rendering.
 - [ ] Test the comparison CSV export.
