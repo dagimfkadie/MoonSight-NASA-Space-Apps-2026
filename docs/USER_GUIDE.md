@@ -122,6 +122,8 @@ Primary sources:
 - Do not equate geometric Earth visibility with communications feasibility.
 - Do not equate geometric Sun elevation with illumination duration or solar-power availability.
 
-## 9. Current verification caveat
+## 9. Current verification status
 
-The repository documentation records that live NASA raster retrieval, exact lunar CRS verification, live JPL Horizons requests, clean-environment installation, full browser interaction, and complete test execution still require verification. The presence of a feature in this guide describes the committed interface and code path; it is not a claim that every live service has been successfully tested.
+GitHub Actions passed for the PR head commit `f317ccfba578fc1b847f224184ec4d89f068268b` before it was merged. CI installs the project in a clean Ubuntu/Python 3.11 environment, compiles the Python sources, runs Ruff, and executes pytest, including the Streamlit AppTest startup smoke test.
+
+This confirms the automated software checks, not live scientific validation. Live NASA raster retrieval, exact MOON_ME / DE421 CRS verification, live JPL Horizons requests, independent ephemeris comparison, and full browser/mobile interaction still require separate testing. The presence of a feature in this guide describes the committed interface and code path; it is not proof that every live service has been successfully tested.
