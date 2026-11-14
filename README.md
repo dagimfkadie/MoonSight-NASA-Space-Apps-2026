@@ -12,7 +12,7 @@ MoonSight is a student-built research prototype intended to help users explore a
 
 Development is being carried out during the official 2026 NASA Space Apps Challenge period. This repository is a fresh implementation and does not import source code or pre-event implementation from the team's earlier prototype.
 
-The repository includes a Streamlit interface, a NASA-listed study-region catalog, a LOLA product URL registry, a bounded GeoTIFF download and metadata-validation workflow, and sampled raster statistics. **The app and complete GitHub test suite have not yet been run from a clean checkout, and no real NASA raster has been validated in the development session.** No terrain interpretation or site ranking is currently produced.
+The repository includes a Streamlit interface, a NASA-listed study-region catalog, a LOLA product URL registry, a bounded GeoTIFF download and metadata-validation workflow, and sampled raster statistics. The raster validator requires a projected coordinate reference system with metre units and approximately 5 m pixels. **The app and complete GitHub test suite have not yet been run from a clean checkout, and no real NASA raster has been validated in the development session.** No terrain interpretation or site ranking is currently produced.
 
 ## Planned capabilities
 
