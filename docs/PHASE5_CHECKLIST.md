@@ -23,14 +23,23 @@
 - Earth geometric visibility is not communication feasibility.
 - Sun elevation is not solar power or illumination duration.
 
-## Validation still required
+## Automated verification
 
-- [x] Add a Streamlit AppTest startup smoke test to the automated suite.
-- [ ] Run the complete automated test suite and Ruff.
+- [x] Streamlit AppTest startup smoke test is included in the automated suite.
+- [x] Complete pytest suite passed: 46 tests.
+- [x] Ruff passed.
+- [x] Python source compilation passed.
+
+**Evidence:** GitHub Actions workflow run [#125](https://github.com/dagimfkadie/MoonSight-NASA-Space-Apps-2026/actions/runs/43591255469), on merged `main` commit `b9e836cccc57888d206f9e2abe0040158f2eca52` (14 November 2026).
+
+## Manual and live-data validation still required
+
 - [ ] Test all four tabs in a browser.
 - [ ] Test a real NASA raster download and 2-D/3-D rendering.
-- [ ] Test the comparison CSV export.
+- [ ] Test the comparison CSV export in the browser.
 - [ ] Run live Sun and Earth Horizons queries with a verified lunar observer coordinate.
-- [ ] Test the Horizons CSV export.
+- [ ] Test the Horizons CSV export in the browser.
 - [ ] Check mobile layout and long-download feedback.
-- [ ] Run the complete automated test suite and Ruff.
+- [ ] Verify the downloaded raster's complete MOON_ME / DE421 CRS definition against NASA product metadata.
+
+Passing automated checks does not complete these manual, live-data, or scientific-validation tasks.
