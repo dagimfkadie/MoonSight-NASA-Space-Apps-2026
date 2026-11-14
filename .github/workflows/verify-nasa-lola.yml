@@ -1,0 +1,116 @@
+name: Verify real NASA LOLA GeoTIFF
+
+on:
+  push:
+    paths:
+      - ".github/workflows/verify-nasa-lola.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-lola:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install raster inspection tools
+        run: python -m pip install --upgrade pip rasterio
+
+      - name: Download and inspect NASA Site04 elevation GeoTIFF
+        env:
+          NASA_URL: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site04/Site04_final_adj_5mpp_surf.tif
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          import sys
+          from pathlib import Path
+
+          import rasterio
+          import requests
+
+          url = os.environ["NASA_URL"]
+          target = Path("Site04_final_adj_5mpp_surf.tif")
+          max_bytes = 2 * 1024 * 1024 * 1024
+
+          print(f"Source: {url}")
+          with requests.get(url, stream=True, timeout=(30, 180)) as response:
+              response.raise_for_status()
+              content_type = response.headers.get("Content-Type", "")
+              length_header = response.headers.get("Content-Length")
+              print(f"HTTP status: {response.status_code}")
+              print(f"Content-Type: {content_type}")
+              print(f"Content-Length: {length_header or 'not supplied'}")
+              if "text/html" in content_type.lower():
+                  raise RuntimeError("NASA returned HTML rather than a GeoTIFF.")
+              if length_header and int(length_header) > max_bytes:
+                  raise RuntimeError(f"File exceeds safety limit of {max_bytes} bytes.")
+
+              digest = hashlib.sha256()
+              total = 0
+              with target.open("wb") as output:
+                  for chunk in response.iter_content(chunk_size=1024 * 1024):
+                      if not chunk:
+                          continue
+                      total += len(chunk)
+                      if total > max_bytes:
+                          raise RuntimeError(f"Download exceeded {max_bytes} bytes.")
+                      if total <= 4 and len(chunk) >= 4:
+                          if chunk[:4] not in (bytes.fromhex("49492a00"), bytes.fromhex("4d4d002a")):
+                              raise RuntimeError("Response does not have a classic TIFF header.")
+                      digest.update(chunk)
+                      output.write(chunk)
+
+          if total < 4:
+              raise RuntimeError("Downloaded response is empty or too small.")
+
+          with rasterio.open(target) as ds:
+              if ds.crs is None:
+                  raise RuntimeError("GeoTIFF has no CRS.")
+              metadata = {
+                  "source_url": url,
+                  "download_status": "success",
+                  "file_name": target.name,
+                  "file_size_bytes": total,
+                  "sha256": digest.hexdigest(),
+                  "width_pixels": ds.width,
+                  "height_pixels": ds.height,
+                  "band_count": ds.count,
+                  "data_types": list(ds.dtypes),
+                  "nodata": ds.nodata,
+                  "crs": ds.crs.to_string(),
+                  "crs_wkt": ds.crs.to_wkt(),
+                  "is_projected": bool(ds.crs.is_projected),
+                  "linear_units": ds.crs.linear_units,
+                  "transform": list(ds.transform)[:6],
+                  "pixel_width": abs(float(ds.transform.a)),
+                  "pixel_height": abs(float(ds.transform.e)),
+                  "bounds": [float(v) for v in ds.bounds],
+              }
+
+          metadata["approximately_5m_pixels"] = (
+              4.0 <= metadata["pixel_width"] <= 6.0
+              and 4.0 <= metadata["pixel_height"] <= 6.0
+          )
+          Path("nasa-lola-verification.json").write_text(
+              json.dumps(metadata, indent=2), encoding="utf-8"
+          )
+          print(json.dumps({k: v for k, v in metadata.items() if k != "crs_wkt"}, indent=2))
+          print("\nFull CRS WKT saved in nasa-lola-verification.json")
+          PY
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nasa-lola-site04-verification
+          path: nasa-lola-verification.json
+          if-no-files-found: warn
+          retention-days: 14
