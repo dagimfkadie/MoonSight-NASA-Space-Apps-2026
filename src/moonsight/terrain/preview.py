@@ -26,6 +26,10 @@ class TerrainPreview:
     sample_width: int
     sample_height: int
     units: str
+    crs_name: str
+    sample_pixel_width_m: float
+    sample_pixel_height_m: float
+    bounds_m: tuple[float, float, float, float]
 
 
 def load_terrain_preview(
@@ -88,6 +92,15 @@ def load_terrain_preview(
             sample_width=sample_width,
             sample_height=sample_height,
             units=units,
+            crs_name=dataset.crs.name,
+            sample_pixel_width_m=abs(sample_transform.a),
+            sample_pixel_height_m=abs(sample_transform.e),
+            bounds_m=(
+                float(dataset.bounds.left),
+                float(dataset.bounds.bottom),
+                float(dataset.bounds.right),
+                float(dataset.bounds.top),
+            ),
         )
 
 
