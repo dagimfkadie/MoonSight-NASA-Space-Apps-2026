@@ -57,7 +57,9 @@ For each selected NASA GeoTIFF, record and independently compare:
 - Data type, units, scale/offset, NoData value and mask behavior.
 - Provider documentation and retrieval timestamp.
 
-NASA's South Pole archive describes the products as 5 m/pixel south-polar stereographic GeoTIFFs with X/Y in metres, MOON_ME reference frame and DE421 ephemeris. The current code only checks projected CRS, metre units and pixel dimensions within 4–6 m. It does not yet verify the full lunar CRS definition. This is a known validation gap. The provenance timestamp is the local file modification time, not a NASA server-side modification timestamp; record the UTC retrieval time separately when collecting live evidence.
+NASA's South Pole archive page was reviewed on 2026-11-14. It lists the six study regions used by MoonSight (Site01, Site04, Site07, Site11, Site20 and Site23), describes the available elevation, spot-count, slope and uncertainty products, and states that the GeoTIFFs are 5 m/pixel south-polar stereographic grids with X/Y in metres in the MOON_ME reference frame of ephemeris DE421. The archive page also identifies the product meanings and headline units: elevation in metres, spot counts, slope in degrees, and elevation/slope uncertainty as RMS quantities. This is a source-documentation check only; it does not establish the metadata tags or contents of a downloaded binary file.
+
+The current code only checks projected CRS, metre units and pixel dimensions within 4–6 m. It does not yet verify the full lunar CRS definition. This remains a known validation gap. A real GeoTIFF still needs to be retrieved and inspected, and its full CRS WKT, pixel registration, transform, data type, scale/offset and NoData behavior compared with authoritative product documentation. The archive page does not, by itself, provide enough evidence to certify all of those file-level properties. The provenance timestamp is the local file modification time, not a NASA server-side modification timestamp; record the UTC retrieval time separately when collecting live evidence.
 
 ### 3.2 File integrity and retrieval
 
@@ -186,7 +188,7 @@ Create one record per live source or independent comparison. Do not mark a recor
 
 ## 8. Current validation status
 
-The following status distinguishes automated software checks from live data and scientific validation. GitHub Actions passed on merged `main` commit `b9e836cccc57888d206f9e2abe0040158f2eca52` (workflow run [#125](https://github.com/dagimfkadie/MoonSight-NASA-Space-Apps-2026/actions/runs/43591255469)). The clean Ubuntu/Python 3.11 workflow compiled sources, ran Ruff and completed the full pytest suite: 46 tests passed, including the Streamlit AppTest startup smoke test.
+The following status distinguishes automated software checks from live data and scientific validation. GitHub Actions passed on current merged `main` commit `2f7974e807f7ba1ad9293f11a3e18e2469fba251` (workflow run [#131](https://github.com/dagimfkadie/MoonSight-NASA-Space-Apps-2026/actions/runs/43591451169)). The clean Ubuntu/Python 3.11 workflow compiled sources, ran Ruff and completed the full pytest suite: 46 tests passed, including the Streamlit AppTest startup smoke test. The NASA archive catalogue/specification page was also reviewed on 2026-11-14; this confirms the provider's published product description, not a live file download or file-level CRS validation.
 
 | Validation item | Status |
 |---|---|
@@ -194,9 +196,10 @@ The following status distinguishes automated software checks from live data and 
 | Synthetic raster summary tests | Implemented and included in the passing CI run |
 | Horizons parser and fake-session request tests | Implemented and included in the passing CI run; no live-service proof |
 | Dedicated terrain preview tests | Implemented in `tests/test_terrain_preview.py` and included in the passing CI run |
-| Live NASA LOLA download evidence | Pending |
-| Exact MOON_ME / DE421 CRS verification | Pending |
-| Product-specific units and NoData metadata audit | Pending |
+| NASA archive catalogue and published product-specification review | Completed on 2026-11-14; confirms listed sites, product families, 5 m/pixel south-polar stereographic grids, metre X/Y coordinates and MOON_ME / DE421 description only |
+| Live NASA LOLA GeoTIFF retrieval and file-integrity evidence | Pending |
+| Exact file-level MOON_ME / DE421 CRS WKT verification | Pending |
+| Per-file scale/offset and NoData metadata audit | Pending |
 | Live JPL Horizons request with documented coordinates | Pending |
 | Independent Horizons result comparison | Pending |
 | Terrain-aware horizon / illumination validation | Not implemented |
