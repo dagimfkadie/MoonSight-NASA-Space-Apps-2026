@@ -1,40 +1,46 @@
 # Phase 2 — Architecture and project structure
 
-## Status
+## Implemented architecture
 
-Phase 2 foundation files have been committed and retrieved from GitHub for verification. Runtime installation, Streamlit launch, and pytest execution have not yet been performed.
-
-| Item | Status | Evidence |
+| Layer | Implementation | Status |
 |---|---|---|
-| Python packaging configuration | Implemented, not runtime-tested | `pyproject.toml` |
-| Dependency list | Implemented, not installed | `requirements.txt` |
-| Streamlit application shell | Implemented, not launched | `app.py` |
-| Modular package structure | Implemented, files verified | `src/moonsight/` |
-| NASA LOLA study-region catalog | Implemented from NASA archive labels | `src/moonsight/catalog.py` |
-| Catalog unit tests | Written, not executed | `tests/test_catalog.py` |
-| Architecture documentation | Implemented | `docs/ARCHITECTURE.md` |
-| Scientific methodology framework | Implemented | `docs/SCIENTIFIC_METHODOLOGY.md` |
+| Presentation | Streamlit multi-tab app | Implemented; launch pending |
+| Catalog | Six NASA LOLA study-region labels | Implemented; no invented coordinates |
+| Data access | Product URL registry, bounded downloader, cache and raster metadata inspection | Implemented; real file validation pending |
+| Terrain | Bounded sample statistics, heatmap and 3D elevation surface | Implemented; real NASA raster display pending |
+| Astronomy | JPL Horizons observer API client | Implemented; live request pending |
+| Comparison | Same-product, two-region descriptive comparison and CSV export | Implemented; end-to-end test pending |
+| Testing | pytest tests and GitHub Actions workflow | Implemented; full suite/CI status pending |
+| Documentation | Architecture, methodology and phase checklists | Implemented |
 
-## Important source-backed details
+## Project structure
 
-NASA's South Pole Landing Site LOLA DEM archive lists six study-region product groups: Site01, Site04, Site07, Site11, Site20, and Site23. It describes the associated GeoTIFF products as 5 m/pixel, with south-polar stereographic X/Y coordinates in metres and a MOON_ME reference frame tied to DE421.
+```text
+app.py
+src/moonsight/
+  astronomy/horizons.py
+  catalog.py
+  data/
+    downloader.py
+    lola.py
+    summary.py
+  terrain/preview.py
+tests/
+docs/
+.github/workflows/ci.yml
+```
 
-Source: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/
+## Important design decisions
 
-JPL Horizons documents observer ephemerides and apparent azimuth/elevation output. Lunar topocentric observer configuration must be explicitly validated before using returned values in MoonSight.
+- Keep UI code separate from data and scientific modules.
+- Treat LOLA study-region IDs as archive identifiers, not as latitude/longitude coordinates.
+- Preserve NASA-provided slope and uncertainty products instead of substituting unsupported estimates.
+- Keep raster sampling bounded for interactive performance and label it as sampling.
+- Request apparent azimuth/elevation from JPL Horizons rather than relying on a simplified orbit approximation.
+- Require explicit user-entered lunar observer coordinates for Horizons; do not assign arbitrary coordinates to a named LOLA region.
+- Separate geometric visibility from terrain obstruction and radio communication feasibility.
+- Avoid a composite site score or landing-safety recommendation.
 
-Source: https://ssd-api.jpl.nasa.gov/doc/horizons.html
+## Phase 2 status
 
-## Remaining verification
-
-- [ ] Install package in a clean Python environment using `pip install -e ".[dev]"`.
-- [ ] Run `pytest`.
-- [ ] Run `ruff check .`.
-- [ ] Launch `streamlit run app.py`.
-- [ ] Confirm the application loads and the six source-listed site names display.
-- [ ] Confirm the README setup instructions match the actual environment.
-- [ ] Fix any failures and record the results here.
-
-## Exit criteria
-
-Phase 2 is complete only after the package installs, tests pass, lint checks pass, and the Streamlit shell starts successfully. Source-backed labels are not equivalent to verified site coordinates or integrated terrain products.
+The package structure and modular design are implemented. Phase 2 is **not runtime-verified** until a clean environment can install the project, run pytest and Ruff, and launch Streamlit successfully.
