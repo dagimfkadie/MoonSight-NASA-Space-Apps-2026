@@ -67,7 +67,7 @@ def test_inspector_reads_valid_five_metre_geotiff(tmp_path: Path):
     assert metadata.crs_wkt
     assert metadata.transform == (5.0, 0.0, 100.0, 0.0, -5.0, 200.0)
     assert metadata.source_url is None
-    assert metadata.retrieved_at_utc.endswith("+00:00")
+    assert metadata.file_modified_at_utc.endswith("+00:00")
 
 
 def test_inspector_rejects_geographic_coordinate_system(tmp_path: Path):
