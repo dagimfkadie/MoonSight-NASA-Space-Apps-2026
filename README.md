@@ -10,9 +10,9 @@ MoonSight is a student-built research prototype intended to help users explore a
 
 ## Project status
 
-Development is being carried out during the official 2026 NASA Space Apps Challenge period. This repository is a fresh implementation. It does not import source code or pre-event implementation from the team's earlier prototype.
+Development is being carried out during the official 2026 NASA Space Apps Challenge period. This repository is a fresh implementation and does not import source code or pre-event implementation from the team's earlier prototype.
 
-At this stage, the repository foundation is being prepared. Features must not be described as implemented or tested until the corresponding code and validation evidence exist.
+The repository now includes a Streamlit interface, a catalog of NASA-listed study regions, a LOLA product URL registry, and a bounded GeoTIFF download/metadata-validation workflow. **The application, automated tests, and real NASA raster downloads have not yet been run and verified in a runtime environment.** No terrain interpretation or site ranking is currently produced.
 
 ## Planned capabilities
 
@@ -82,9 +82,9 @@ Use Python 3.10 or newer.
    ruff check .
    ```
 
-These are setup instructions, not evidence that the commands have already been run successfully. Record actual results in the project checklist. Rasterio installation may depend on the Python version and operating-system environment.
+These are setup instructions, not evidence that the commands have already been run successfully. Record actual results in the phase checklists. Rasterio installation may depend on the Python version and operating-system environment.
 
-## Data sources under evaluation
+## Data sources
 
 - NASA LOLA product page: https://pgda.gsfc.nasa.gov/products/78
 - NASA LOLA data archive: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/
@@ -92,7 +92,7 @@ These are setup instructions, not evidence that the commands have already been r
 - NASA lunar polar illumination and Earth visibility resources: https://pgda.gsfc.nasa.gov/products/69
 - NASA Lunar Surface Data Book: https://ntrs.nasa.gov/citations/20250002845
 
-NASA's LOLA south-pole archive documents elevation, slope, and uncertainty GeoTIFF products at 5 m/pixel for its listed study regions. Before using a file, verify its actual download, metadata, coordinate reference, units, and data quality. A source is not considered integrated merely because it is listed here.
+NASA's LOLA south-pole archive lists elevation, slope, spot-count, and uncertainty GeoTIFF products for its study regions. It describes the GeoTIFFs as 5 m/pixel. Each downloaded file must still be checked for its actual metadata and data quality before use.
 
 ## Competition compliance
 
@@ -104,7 +104,7 @@ NASA's LOLA south-pole archive documents elevation, slope, and uncertainty GeoTI
 - Do not claim NASA endorsement or affiliation.
 - Do not claim a calculation or feature is validated without evidence.
 
-See [docs/PHASE1_CHECKLIST.md](docs/PHASE1_CHECKLIST.md) and [docs/PHASE2_CHECKLIST.md](docs/PHASE2_CHECKLIST.md) for development status.
+Development checklists: [Phase 1](docs/PHASE1_CHECKLIST.md), [Phase 2](docs/PHASE2_CHECKLIST.md), and [Phase 3](docs/PHASE3_CHECKLIST.md).
 
 ## License
 
