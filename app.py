@@ -206,7 +206,13 @@ with geometry_tab:
     with g4:
         observation_date = st.date_input("Start date (UTC)", value=date.today())
     duration_days = st.selectbox("Duration", [1, 2, 3], index=0)
+    coordinates_confirmed = st.checkbox(
+        "I have independently verified these lunar geodetic coordinates and their source."
+    )
     if st.button("Retrieve Sun and Earth ephemerides", type="primary"):
+        if not coordinates_confirmed:
+            st.error("Confirm the provenance of the lunar observer coordinates before querying Horizons.")
+            st.stop()
         output = []
         try:
             with st.spinner("Querying NASA/JPL Horizons..."):
