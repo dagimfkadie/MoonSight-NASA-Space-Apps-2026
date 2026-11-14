@@ -4,108 +4,122 @@
 **Team:** #MoonSightExplorers  
 **Challenge:** Lunar Landing Site Navigator
 
-MoonSight is a student-built research prototype intended to help users explore and compare lunar south-pole study locations using documented terrain data and Sun/Earth viewing geometry.
+MoonSight is an educational prototype for exploring NASA lunar south-pole terrain products and apparent Sun/Earth directions. It is designed to help users compare source evidence—not to certify landing sites.
 
-> **Scientific and safety note:** MoonSight is an educational decision-support prototype, not a flight system. It does not certify landing safety, mission feasibility, or operational communications capability.
+> **Safety and science boundary:** MoonSight is not a flight system. It does not determine landing safety, mission feasibility, terrain clearance, solar power availability, or operational communications capability.
 
-## Project status
+## Current prototype
 
-Development is being carried out during the official 2026 NASA Space Apps Challenge period. This repository is a fresh implementation and does not import source code or pre-event implementation from the team's earlier prototype.
+The Streamlit app provides four tabs:
 
-The repository includes a Streamlit interface, a NASA-listed study-region catalog, a LOLA product URL registry, a bounded GeoTIFF download and metadata-validation workflow, sampled raster statistics, and a bounded Plotly terrain heatmap preview. The raster validator requires a projected coordinate reference system with metre units and approximately 5 m pixels. **The app and complete GitHub test suite have not yet been run from a clean checkout, and no real NASA raster has been validated in the development session.** The heatmap implementation has test cases, but those tests are not yet confirmed as passing. No terrain interpretation or site ranking is currently produced.
+1. **Terrain explorer:** select one of six NASA LOLA study-region product groups; download and inspect a GeoTIFF; view bounded sample statistics and a 2-D heatmap. Elevation products also have a 3-D sampled surface.
+2. **Compare regions:** compare descriptive sample statistics for the same product across two regions and export the table as CSV.
+3. **Sun & Earth geometry:** enter a lunar geodetic observer coordinate and request apparent azimuth/elevation for the Sun and Earth from JPL Horizons. Results can be exported as CSV.
+4. **Data & limitations:** source descriptions, assumptions and scientific limitations.
 
-## Planned capabilities
+The Horizons coordinates are explicitly user-entered. The app does not invent latitude/longitude for NASA's named LOLA tiles or imply that a default coordinate belongs to any particular region.
 
-- Compare documented lunar south-pole study locations.
-- Retrieve and visualize NASA LOLA terrain products.
-- Examine elevation, slope, and available uncertainty information.
-- Use NASA/JPL Horizons for date-specific apparent Sun and Earth directions.
-- Distinguish geometric visibility from terrain-obstructed visibility and radio-link feasibility.
-- Provide interactive plots and clearly labeled data exports.
-- Document data provenance, assumptions, uncertainty, and limitations.
+## Verification status
+
+- Repository foundation, data modules, Streamlit UI, and tests are committed.
+- Focused synthetic terrain tests and isolated raster-summary checks were previously recorded in `docs/PHASE3_CHECKLIST.md`.
+- Horizons tests use synthetic API response fixtures and a fake HTTP session; they do not prove that a live Horizons request succeeds.
+- The full repository test suite, Ruff, Streamlit launch, live NASA GeoTIFF retrieval, and live JPL Horizons requests still require verification in a clean environment.
+- No real NASA raster has yet been validated in this development session.
+- No terrain-aware horizon obstruction, site ranking, or landing-safety score is implemented.
+
+## NASA Space Apps timing
+
+The official 2026 event is November 14–15, 2026. The official site states that project submission opens November 14 at 9:00 AM and closes November 15 at 11:59 PM local time. Follow the event-specific Project Submission page and local-event instructions for final requirements.
+
+Official event: https://www.spaceappschallenge.org/2026/
 
 ## Technology
 
-Python, Streamlit, NumPy, Pandas, Rasterio, Plotly, and Requests. Development tools include pytest and Ruff.
+Python 3.10+, Streamlit, NumPy, Pandas, Rasterio, Plotly, Requests, pytest and Ruff.
 
 ## Project layout
 
 ```text
 app.py
 src/moonsight/
+  astronomy/horizons.py
   data/
-  terrain/
-  astronomy/
-  visibility/
-  comparison/
-  visualization/
+  terrain/preview.py
 tests/
 docs/
+.github/workflows/ci.yml
 ```
 
 ## Setup and run
 
-Use Python 3.10 or newer.
+1. Clone the repository and open a terminal in its directory.
+2. Create and activate a virtual environment.
 
-1. Clone this repository and open a terminal in the project folder.
-2. Create and activate a virtual environment:
-
-   **Windows (PowerShell):**
+   **Windows PowerShell**
    ```powershell
    python -m venv .venv
    .venv\\Scripts\\Activate.ps1
    ```
 
-   **macOS / Linux:**
+   **macOS / Linux**
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
    ```
 
-3. Install the project and development tools:
+3. Install the package and development dependencies.
 
    ```bash
    python -m pip install --upgrade pip
    python -m pip install -e ".[dev]"
    ```
 
-4. Start the Streamlit application:
+4. Launch the application.
 
    ```bash
    streamlit run app.py
    ```
 
-5. Run the automated checks:
+5. Run quality checks.
 
    ```bash
    pytest
    ruff check .
    ```
 
-These are setup instructions, not evidence that the commands have already been run successfully. Record actual results in the phase checklists. Rasterio installation may depend on the Python version and operating-system environment.
+These commands are setup instructions, not claims that the complete suite or app has already passed in a clean checkout. Rasterio installation may vary by operating system and Python environment.
 
 ## Data sources
 
 - NASA LOLA product page: https://pgda.gsfc.nasa.gov/products/78
-- NASA LOLA data archive: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/
-- NASA/JPL Horizons documentation: https://ssd-api.jpl.nasa.gov/doc/horizons.html
+- NASA LOLA South Pole archive: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/
+- NASA/JPL Horizons API: https://ssd-api.jpl.nasa.gov/doc/horizons.html
 - NASA lunar polar illumination and Earth visibility resources: https://pgda.gsfc.nasa.gov/products/69
 - NASA Lunar Surface Data Book: https://ntrs.nasa.gov/citations/20250002845
 
-NASA's LOLA south-pole archive lists elevation, slope, spot-count, and uncertainty GeoTIFF products for six study regions. It describes the GeoTIFFs as 5 m/pixel. Each downloaded file must still be checked for its actual metadata and data quality before use.
+NASA describes the listed LOLA GeoTIFFs as 5 m/pixel south-polar stereographic X/Y grids in metres, MOON_ME reference frame, ephemeris DE421. MoonSight checks basic file properties but still needs a real file metadata comparison against the complete NASA reference definition.
 
-## Competition compliance
+## Development checklists
 
-- Cite every source used, including datasets, software, and third-party materials.
-- Document licenses for original and third-party materials.
+- [Phase 1 — Compliance and repository](docs/PHASE1_CHECKLIST.md)
+- [Phase 2 — Architecture](docs/PHASE2_CHECKLIST.md)
+- [Phase 3 — NASA data](docs/PHASE3_CHECKLIST.md)
+- [Phase 4 — Scientific engine](docs/PHASE4_CHECKLIST.md)
+- [Phase 5 — Interactive interface](docs/PHASE5_CHECKLIST.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Scientific methodology](docs/SCIENTIFIC_METHODOLOGY.md)
+- [AI assistance disclosure](AI_DISCLOSURE.md)
+
+## Competition compliance and attribution
+
+- Cite NASA datasets and all third-party materials used.
 - Record AI assistance accurately in `AI_DISCLOSURE.md`.
-- Credit contributors truthfully.
-- Do not include private personal information or credentials.
-- Do not claim NASA endorsement or affiliation.
-- Do not claim a calculation or feature is validated without evidence.
-
-Development checklists: [Phase 1](docs/PHASE1_CHECKLIST.md), [Phase 2](docs/PHASE2_CHECKLIST.md), and [Phase 3](docs/PHASE3_CHECKLIST.md).
+- Credit contributors only for work they actually performed.
+- Do not publish personal contact details, credentials, or private information.
+- Do not imply NASA endorsement or affiliation.
+- Review the current challenge-specific submission form, media requirements, and local-event instructions before submitting.
 
 ## License
 
-The team has agreed to use the MIT License for original project code; see [LICENSE](LICENSE). NASA datasets, third-party software, and other external materials may have separate terms. The MIT license on this repository does not automatically relicense those materials.
+The repository contains an MIT license for original project code. This does not automatically relicense NASA datasets, third-party packages, or external materials. Confirm that all contributors agree with the repository license before final submission.
