@@ -25,7 +25,7 @@ class RasterMetadata:
 
     path: str
     source_url: str | None
-    retrieved_at_utc: str
+    file_modified_at_utc: str
     file_size_bytes: int
     sha256: str
     width: int
@@ -63,7 +63,7 @@ def inspect_lola_geotiff(
     path: str | Path,
     *,
     source_url: str | None = None,
-    retrieved_at_utc: str | None = None,
+    file_modified_at_utc: str | None = None,
 ) -> RasterMetadata:
     """Inspect a GeoTIFF and check basic archive expectations.
 
@@ -81,7 +81,7 @@ def inspect_lola_geotiff(
         raise ValueError("Downloaded file does not have a valid TIFF header.")
 
     stat = file_path.stat()
-    timestamp = retrieved_at_utc or datetime.fromtimestamp(
+    timestamp = file_modified_at_utc or datetime.fromtimestamp(
         stat.st_mtime, tz=timezone.utc
     ).isoformat()
     checksum = _sha256_file(file_path)
@@ -114,7 +114,7 @@ def inspect_lola_geotiff(
             return RasterMetadata(
                 path=str(file_path),
                 source_url=source_url,
-                retrieved_at_utc=timestamp,
+                file_modified_at_utc=timestamp,
                 file_size_bytes=stat.st_size,
                 sha256=checksum,
                 width=dataset.width,
@@ -210,17 +210,17 @@ def download_lola_geotiff(
         if bytes_written == 0:
             raise ValueError("NASA returned an empty file.")
 
-        retrieved_at = datetime.now(timezone.utc).isoformat()
+        downloaded_at = datetime.now(timezone.utc).isoformat()
         inspect_lola_geotiff(
             temporary_path,
             source_url=url,
-            retrieved_at_utc=retrieved_at,
+            file_modified_at_utc=downloaded_at,
         )
         temporary_path.replace(destination)
         return inspect_lola_geotiff(
             destination,
             source_url=url,
-            retrieved_at_utc=retrieved_at,
+            file_modified_at_utc=downloaded_at,
         )
     finally:
         if temporary_path is not None:
