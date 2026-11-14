@@ -225,9 +225,12 @@ with geometry_tab:
     )
     st.warning(
         "Horizons observer coordinates use east longitude (degrees), latitude "
-        "(degrees), and altitude (kilometres). Enter coordinates whose lunar "
-        "geodetic definition you can document. Do not treat a zero or default "
-        "coordinate as the location of a named landing-site study region."
+        "(degrees), and altitude (kilometres) above the reference ellipsoid used "
+        "for the Moon's geodetic coordinates. Positive longitude is east; negative "
+        "longitude is west (for example, -90° is equivalent to 270° east). This is "
+        "not local terrain elevation. Enter coordinates whose lunar geodetic "
+        "definition you can document. Do not treat a zero or default coordinate "
+        "as the location of a named landing-site study region."
     )
     g1, g2, g3, g4 = st.columns(4)
     with g1:
@@ -240,7 +243,7 @@ with geometry_tab:
         )
     with g3:
         altitude = st.number_input(
-            "Altitude (km)", min_value=-20.0, max_value=100.0, value=0.0
+            "Altitude above reference ellipsoid (km)", min_value=-20.0, max_value=100.0, value=0.0
         )
     with g4:
         observation_date = st.date_input("Start date (UTC)", value=date.today())
