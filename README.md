@@ -23,7 +23,8 @@ The Horizons coordinates are explicitly user-entered. The app does not invent la
 
 - GitHub Actions passed on the merged `main` commit `b9e836cccc57888d206f9e2abe0040158f2eca52` (workflow run [#125](https://github.com/dagimfkadie/MoonSight-NASA-Space-Apps-2026/actions/runs/43591255469)). The clean Ubuntu/Python 3.11 workflow compiled the Python sources, ran Ruff, and completed the full pytest suite: **46 tests passed**.
 - Automated tests use synthetic rasters and mocked NASA/JPL responses. They verify software behavior, not the scientific validity of live source data or live API results.
-- Live NASA GeoTIFF retrieval, exact MOON_ME / DE421 CRS verification, live JPL Horizons requests, and independent ephemeris comparison remain unverified and should be recorded with evidence before submission.
+- A separate GitHub Actions workflow successfully downloaded and opened the real NASA Site04 elevation GeoTIFF; its JSON report and TIFF are retained in artifact `nasa-lola-site04-verification` for run [#43591846379](https://github.com/dagimfkadie/MoonSight-NASA-Space-Apps-2026/actions/runs/43591846379). The report records a 3,200 × 3,200 Float32, single-band raster, 5 m pixel spacing, 40,980,806-byte file size, and SHA-256 checksum `38ff70dbdf2f066c2cfa94a646c3a59d653ce7f6b4528b15fc1b43ee397ce758`. The file reports an unnamed polar stereographic CRS; exact MOON_ME / DE421 identity is not verified. Live JPL Horizons requests and independent ephemeris comparison also remain unverified.
+- The verification artifact is temporary and expires November 28, 2026; preserve the report and TIFF elsewhere if long-term evidence is needed.
 - Provenance JSON reports the local file modification timestamp; it is not a NASA server-side modification timestamp.
 - No terrain-aware horizon obstruction, site ranking, or landing-safety score is implemented.
 
