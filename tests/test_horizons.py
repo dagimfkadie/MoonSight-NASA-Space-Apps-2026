@@ -53,6 +53,7 @@ class FakeResponse:
 
     def json(self):
         return {
+            "signature": {"source": "NASA/JPL Horizons API", "version": "1.0"},
             "result": (
                 "Ephemeris\n$$SOE\n"
                 "2026-Nov-14 00:00, , , 25.0, 30.0\n"
