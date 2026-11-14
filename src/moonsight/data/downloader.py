@@ -6,10 +6,10 @@ not interpret the raster as a landing-safety certification.
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
-from pathlib import Path
 import os
 import tempfile
+from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Any
 
 import rasterio
