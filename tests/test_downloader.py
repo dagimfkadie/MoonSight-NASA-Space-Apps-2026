@@ -11,12 +11,12 @@ from moonsight.data.downloader import (
 )
 
 
-@pytest.mark.parametrize("header", [b"II*\\x00", b"MM\\x00*"])
+@pytest.mark.parametrize("header", [bytes.fromhex("49492a00"), bytes.fromhex("4d4d002a")])
 def test_accepts_classic_tiff_headers(header):
     assert _has_tiff_header(header)
 
 
-@pytest.mark.parametrize("header", [b"", b"HTML", b"PK\\x03\\x04", b"II+\\x00"])
+@pytest.mark.parametrize("header", [b"", b"HTML", bytes.fromhex("504b0304"), b"II+\\x00"])
 def test_rejects_non_tiff_headers(header):
     assert not _has_tiff_header(header)
 
