@@ -92,7 +92,7 @@ def load_terrain_preview(
             sample_width=sample_width,
             sample_height=sample_height,
             units=units,
-            crs_name=dataset.crs.name,
+            crs_name=dataset.crs.to_string(),
             sample_pixel_width_m=abs(sample_transform.a),
             sample_pixel_height_m=abs(sample_transform.e),
             bounds_m=(
