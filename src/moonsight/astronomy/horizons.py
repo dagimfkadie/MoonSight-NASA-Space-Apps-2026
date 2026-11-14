@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from datetime import date, timedelta
 import csv
 import io
 import math
+from dataclasses import dataclass
+from datetime import date, timedelta
 from typing import Any
 
 import requests
