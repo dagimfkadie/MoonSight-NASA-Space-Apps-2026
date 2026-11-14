@@ -127,13 +127,13 @@ def fetch_lunar_observer_ephemeris(
 
     if not isinstance(payload, dict):
         raise RuntimeError("JPL Horizons returned an unexpected response structure.")
+    if payload.get("error"):
+        raise RuntimeError(f"JPL Horizons error: {payload['error']}")
     signature = payload.get("signature")
     if not isinstance(signature, dict) or not signature.get("version"):
         raise RuntimeError("JPL Horizons response is missing its API signature/version.")
     if signature.get("source") != "NASA/JPL Horizons API":
         raise RuntimeError("Response signature does not identify the NASA/JPL Horizons API.")
-    if payload.get("error"):
-        raise RuntimeError(f"JPL Horizons error: {payload['error']}")
     result = payload.get("result")
     if not isinstance(result, str):
         raise RuntimeError("JPL Horizons response did not contain an ephemeris result.")
