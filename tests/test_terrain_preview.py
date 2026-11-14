@@ -51,6 +51,10 @@ def test_preview_respects_maximum_dimension(tmp_path: Path):
     assert preview.sample_height == 16
     assert preview.source_width == 100
     assert preview.source_height == 100
+    assert preview.crs_name
+    assert preview.sample_pixel_width_m == 31.25
+    assert preview.sample_pixel_height_m == 31.25
+    assert preview.bounds_m == (100.0, -300.0, 600.0, 200.0)
 
 
 def test_preview_rejects_invalid_sample_size(tmp_path: Path):
