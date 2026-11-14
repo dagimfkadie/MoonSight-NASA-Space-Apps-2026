@@ -194,7 +194,7 @@ The following status distinguishes automated software checks from live data and 
 | Synthetic raster summary tests | Implemented and included in the passing CI run |
 | Horizons parser and fake-session request tests | Implemented and included in the passing CI run; no live-service proof |
 | Dedicated terrain preview tests | Implemented in `tests/test_terrain_preview.py` and included in the passing CI run |
-| Live NASA LOLA download evidence | Pending |
+| Live NASA LOLA Site04 elevation retrieval | **Passed** — GitHub Actions run #43591846379 downloaded the source GeoTIFF and Rasterio opened it; see the evidence record below. This does not establish exact lunar CRS identity or product scientific correctness |
 | Exact MOON_ME / DE421 CRS verification | Pending |
 | Product-specific units and NoData metadata audit | Pending |
 | Live JPL Horizons request with documented coordinates | Pending |
@@ -202,6 +202,24 @@ The following status distinguishes automated software checks from live data and 
 | Terrain-aware horizon / illumination validation | Not implemented |
 | Communications link-budget validation | Not implemented |
 | Landing hazard or safety validation | Not implemented |
+
+### 8.1 Live NASA LOLA retrieval evidence
+
+A dedicated GitHub Actions workflow completed successfully on November 14, 2026. Run: https://github.com/dagimfkadie/MoonSight-NASA-Space-Apps-2026/actions/runs/43591846379. The workflow downloaded the NASA Site04 elevation GeoTIFF from https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/Site04/Site04_final_adj_5mpp_surf.tif, opened it with Rasterio, wrote a JSON metadata report, and uploaded both the report and TIFF as artifact `nasa-lola-site04-verification` (artifact ID `14113230067`).
+
+Recorded evidence:
+
+- Retrieval status: success
+- File: `Site04_final_adj_5mpp_surf.tif`
+- File size: 40,980,806 bytes
+- SHA-256: `38ff70dbdf2f066c2cfa94a646c3a59d653ce7f6b4528b15fc1b43ee397ce758`
+- Raster: 3,200 × 3,200 pixels, one band, Float32
+- Pixel spacing: 5 m × 5 m
+- Raster bounds: X = -9,000 to 7,000 m; Y = -15,000 to 1,000 m
+- Reported CRS: unnamed polar stereographic; the WKT includes a 1,737,400 m sphere and a -90° latitude of origin
+- Retrieval workflow artifact created: 2026-11-14 11:50:08 UTC; artifact retention ends 2026-11-28 11:50:06 UTC
+
+**Interpretation:** this is evidence that one real NASA archive file was downloaded and could be opened and inspected. The reported CRS is unnamed and does not itself identify MOON_ME / DE421. Exact CRS/reference-frame equivalence, product-specific metadata audit, live Horizons calls, and independent ephemeris comparison remain pending. The temporary artifact should be preserved before expiry if it is needed after November 28, 2026.
 
 ## 9. References
 
