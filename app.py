@@ -4,6 +4,8 @@ from datetime import date
 
 import pandas as pd
 import plotly.express as px
+import rasterio
+import requests
 import streamlit as st
 
 from moonsight.astronomy.horizons import fetch_lunar_observer_ephemeris
@@ -73,7 +75,7 @@ with terrain_tab:
                 metadata = download_lola_geotiff(site_id, product)
                 summary = summarize_lola_raster(metadata.path, product)
                 preview = load_terrain_preview(metadata.path, units=units)
-            except Exception as exc:
+            except (OSError, ValueError, requests.RequestException, rasterio.errors.RasterioError) as exc:
                 st.error(f"Download or raster processing failed: {exc}")
             else:
                 st.success("File passed the current TIFF, CRS, units and pixel-size checks.")
@@ -149,7 +151,7 @@ with compare_tab:
                                 "NoData sampled pixels": summary.nodata_sample_count,
                             }
                         )
-            except Exception as exc:
+            except (RuntimeError, ValueError) as exc:
                 st.error(f"Comparison could not be completed: {exc}")
             else:
                 frame = pd.DataFrame(records)
