@@ -6,10 +6,14 @@
 |---|---|---|
 | NASA LOLA product URL registry | Implemented; URL naming verified against NASA archive listing | `src/moonsight/data/lola.py` |
 | Bounded HTTP download | Implemented; not yet exercised against NASA from the app | `src/moonsight/data/downloader.py` |
-| Temporary-file and atomic-cache workflow | Implemented; not yet runtime-tested | `src/moonsight/data/downloader.py` |
-| TIFF header check | Implemented; unit tests written but not executed | `tests/test_downloader.py` |
-| Rasterio metadata inspection | Implemented; real NASA raster not yet validated | `src/moonsight/data/downloader.py` |
+| Temporary-file and atomic-cache workflow | Implemented; not yet tested in a clean repository environment | `src/moonsight/data/downloader.py` |
+| TIFF header check | Implemented; covered by unit tests | `tests/test_downloader.py` |
+| Rasterio metadata inspection | Implemented; synthetic GeoTIFF test added | `src/moonsight/data/downloader.py`, `tests/test_downloader.py` |
 | Streamlit download controls | Implemented; app not yet launched | `app.py` |
+
+## Local test note
+
+A local scratch test harness assembled from the current committed catalog, URL-registry, downloader logic, and tests completed with **20 tests passed**. This was useful for checking the logic and synthetic GeoTIFF inspection, but it was not a clean install or test run of the GitHub checkout. The repository's own environment and app still need to be tested.
 
 ## NASA source facts
 
@@ -35,7 +39,7 @@ The current URL builder follows the filenames shown in NASA's archive. The URL p
 ## Remaining work
 
 - [ ] Install the package and dependencies in a clean environment.
-- [ ] Run `pytest` and fix any failures.
+- [ ] Run `pytest` from the GitHub checkout.
 - [ ] Run `ruff check .` and fix any findings.
 - [ ] Launch the Streamlit app.
 - [ ] Download one real NASA product (start with Site04 elevation) and record its metadata.
@@ -46,4 +50,4 @@ The current URL builder follows the filenames shown in NASA's archive. The URL p
 
 ## Current status
 
-**Code committed; runtime and real-data validation still pending.** No terrain measurements, site rankings, or landing-safety conclusions are currently produced by MoonSight.
+**Code committed; a local scratch test harness passed, but clean-checkout runtime and real-data validation remain pending.** No terrain measurements, site rankings, or landing-safety conclusions are currently produced by MoonSight.
