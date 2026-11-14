@@ -112,6 +112,7 @@ NASA describes the listed LOLA GeoTIFFs as 5 m/pixel south-polar stereographic X
 - [Scientific validation plan](docs/SCIENTIFIC_VALIDATION.md)
 - [Project overview](docs/PROJECT_OVERVIEW.md)
 - [Submission readiness checklist](docs/SUBMISSION_CHECKLIST.md)
+- [Demo script](docs/DEMO_SCRIPT.md)
 - [Contributing guide](docs/CONTRIBUTING.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Scientific methodology](docs/SCIENTIFIC_METHODOLOGY.md)
