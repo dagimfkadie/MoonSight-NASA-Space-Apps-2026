@@ -1,6 +1,7 @@
 """MoonSight Streamlit application: terrain evidence and lunar geometry."""
 
 from datetime import date
+import json
 
 import pandas as pd
 import plotly.express as px
@@ -76,9 +77,21 @@ with terrain_tab:
             except Exception as exc:
                 st.error(f"Download or raster processing failed: {exc}")
             else:
-                st.success("File passed the current TIFF, CRS, units and pixel-size checks.")
-                st.subheader("Raster metadata")
+                st.success("The file passed MoonSight's current TIFF, projected-metre and approximate pixel-size checks.")
+                st.markdown(f"[Open the original GeoTIFF at NASA]({metadata.source_url})")
+                st.subheader("Raster metadata and provenance")
+                st.caption(
+                    "The checksum and source URL identify this local file. The CRS WKT is "
+                    "provided for inspection; exact MOON_ME / DE421 equivalence is not yet "
+                    "automatically certified by the downloader."
+                )
                 st.json(metadata.to_dict())
+                st.download_button(
+                    "Download raster provenance JSON",
+                    data=json.dumps(metadata.to_dict(), indent=2),
+                    file_name=f"{site_id}_{product}_provenance.json",
+                    mime="application/json",
+                )
                 st.subheader("Sample statistics")
                 st.caption(
                     "Nearest-neighbour sample only (maximum 512 × 512 pixels), "
@@ -146,7 +159,7 @@ with compare_tab:
                                 "95th percentile": summary.percentile_95,
                                 "Maximum": summary.maximum,
                                 "Valid sampled pixels": summary.valid_sample_count,
-                                "NoData sampled pixels": summary.nodata_sample_count,
+                                "NoData / non-finite sampled pixels": summary.nodata_sample_count,
                             }
                         )
             except Exception as exc:
