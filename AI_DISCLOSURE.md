@@ -13,7 +13,7 @@ This record describes AI assistance used while developing MoonSight. The team mu
 - `src/moonsight/astronomy/horizons.py`: JPL Horizons request construction, response validation and observer-table parsing.
 - `src/moonsight/terrain/preview.py`: bounded raster preview, 2-D heatmap and 3-D surface helper.
 - `app.py`: Streamlit tabs for terrain exploration, descriptive region comparison, and user-entered Sun/Earth ephemeris requests.
-- `tests/test_horizons.py` and `tests/test_terrain_preview.py`: synthetic test fixtures and expected behavior.
+- `tests/test_horizons.py`, `tests/test_terrain_preview.py`, and `tests/test_app_smoke.py`: synthetic test fixtures, expected behavior, and a Streamlit startup smoke test.
 - `docs/PHASE1_CHECKLIST.md`, `docs/PHASE2_CHECKLIST.md`, `docs/PHASE4_CHECKLIST.md`, `docs/PHASE5_CHECKLIST.md`, `docs/ARCHITECTURE.md`, and `README.md`: documentation and status records.
 
 ## Human contributions
@@ -31,7 +31,7 @@ Add each team member's name or agreed public identifier, actual tasks, and evide
 | Terrain preview | Four focused synthetic preview tests were previously recorded as passing in an isolated test package | Run committed tests in a clean clone; test against a real NASA raster |
 | Raster statistics | Three focused synthetic summary tests were previously recorded as passing | Run full repository suite |
 | Horizons client | Test cases added for parsing, input validation, request parameters and response signature | Execute tests; perform live query and compare against Horizons interface |
-| Streamlit interface | Code committed | Install dependencies, launch app, inspect all tabs and exports |
+| Streamlit interface | Code committed; AppTest startup smoke test added to the suite | Execute AppTest/CI, launch app, inspect all tabs and exports |
 | CI | GitHub Actions workflow committed | Confirm workflow run and fix any failures |
 
 ## Media
