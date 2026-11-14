@@ -81,7 +81,7 @@ The comparison uses the same product type for both regions. It does not normaliz
 ## 5. Sun & Earth geometry
 
 1. Open **Sun & Earth geometry**.
-2. Enter east longitude in degrees, latitude in degrees, and altitude in kilometres for a lunar surface observer.
+2. Enter longitude in degrees, latitude in degrees, and altitude in kilometres above the reference ellipsoid used by Horizons for lunar geodetic coordinates. Positive longitude is east; negative longitude is west (for example, -90° is equivalent to 270° east). Altitude is not local terrain elevation.
 3. Choose a UTC start date and a duration of one to three days.
 4. Confirm the checkbox only after independently verifying the coordinate provenance and convention.
 5. Select **Retrieve Sun and Earth ephemerides**.
