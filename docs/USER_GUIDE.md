@@ -63,7 +63,7 @@ Streamlit prints a local address in the terminal. Open that address in a browser
 4. Select **Download and inspect NASA LOLA product**.
 5. Review the raster metadata, sample statistics and 2-D heatmap. Elevation products also display a 3-D sampled surface.
 
-The application caches downloaded files under `data/cache/lola`. The downloader checks the TIFF header, raster readability, projected CRS, metre units and an approximately 5 m pixel size. These checks are basic validation; they do not independently prove that the complete CRS definition matches NASA's MOON_ME / DE421 specification.
+The application caches downloaded files under `data/cache/lola`. The downloader checks the TIFF header, raster readability, projected CRS, metre units and an approximately 5 m pixel size. These checks are basic validation; they do not independently prove that the complete CRS definition matches NASA's MOON_ME / DE421 specification. After a successful download, the app displays the NASA source URL, file size, SHA-256 checksum, affine transform, CRS WKT and other raster metadata. Use **Download raster provenance JSON** to save this metadata record, or open the direct NASA GeoTIFF source link. A checksum identifies the downloaded bytes; it does not certify scientific correctness.
 
 Statistics and previews use a bounded nearest-neighbour sample of at most 512 × 512 pixels. They are not calculations over every pixel in the original raster. NoData and non-finite sample values are excluded from the statistics.
 
