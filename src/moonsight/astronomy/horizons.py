@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from datetime import date, timedelta
 import csv
 import io
 import math
+from dataclasses import dataclass
+from datetime import date, timedelta
 from typing import Any
 
 import requests
@@ -126,7 +126,7 @@ def fetch_lunar_observer_ephemeris(
         raise RuntimeError("JPL Horizons returned invalid JSON.") from exc
 
     if not isinstance(payload, dict):
-        raise RuntimeError("JPL Horizons returned an unexpected response structure.")
+        raise TypeError("JPL Horizons returned an unexpected response structure.")
     if payload.get("error"):
         raise RuntimeError(f"JPL Horizons error: {payload['error']}")
     signature = payload.get("signature")
@@ -136,5 +136,5 @@ def fetch_lunar_observer_ephemeris(
         raise RuntimeError("Response signature does not identify the NASA/JPL Horizons API.")
     result = payload.get("result")
     if not isinstance(result, str):
-        raise RuntimeError("JPL Horizons response did not contain an ephemeris result.")
+        raise TypeError("JPL Horizons response did not contain an ephemeris result.")
     return parse_observer_csv(result)
