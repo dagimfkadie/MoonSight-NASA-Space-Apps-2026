@@ -1,6 +1,6 @@
 """MoonSight Streamlit application: terrain evidence and lunar geometry."""
 
-from datetime import date, timedelta
+from datetime import date
 
 import pandas as pd
 import plotly.express as px
