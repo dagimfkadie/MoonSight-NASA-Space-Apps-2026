@@ -1,3 +1,6 @@
+# Ruff's import sorter misclassifies the src-layout package in this test module.
+# Suppress only import ordering; keep the normal third-party/first-party grouping below.
+# ruff: noqa: I001
 import pytest
 
 from moonsight.data.lola import build_lola_product_url

@@ -4,13 +4,14 @@ The catalog intentionally contains no invented latitude/longitude coordinates.
 The region identifiers and names below are transcribed from the NASA archive page.
 """
 
-from dataclasses import dataclass
+# ruff: noqa: I001
+import dataclasses
 
 
 NASA_LOLA_SITES_URL = "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/"
 
 
-@dataclass(frozen=True, slots=True)
+@dataclasses.dataclass(frozen=True, slots=True)
 class StudySite:
     """A named LOLA study-region product group."""
 
