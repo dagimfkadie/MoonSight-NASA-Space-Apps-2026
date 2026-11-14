@@ -78,9 +78,11 @@ def fetch_lunar_observer_ephemeris(
     """Retrieve apparent AZ/EL at a user-entered lunar geodetic location.
 
     SITE_COORD order follows Horizons' geodetic convention:
-    east longitude (degrees), latitude (degrees), altitude (km).
-    The coordinates are user inputs; this function does not assign them to
-    any named LOLA study region.
+    east longitude (degrees; negative values represent west), latitude
+    (degrees), and altitude (km) above the reference ellipsoid used by
+    Horizons for the Moon's geodetic coordinates. Altitude is not local
+    terrain elevation. The coordinates are user inputs; this function does
+    not assign them to any named LOLA study region.
     """
     if target not in TARGETS:
         raise ValueError(f"Unsupported target {target!r}; choose Sun or Earth.")
