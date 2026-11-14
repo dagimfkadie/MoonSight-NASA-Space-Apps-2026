@@ -3,8 +3,8 @@
 from datetime import date
 
 import pandas as pd
-import requests
 import plotly.express as px
+import requests
 import streamlit as st
 
 from moonsight.astronomy.horizons import fetch_lunar_observer_ephemeris
@@ -235,7 +235,7 @@ with geometry_tab:
                                 "Elevation (°)": position.elevation_deg,
                             }
                         )
-        except Exception as exc:
+        except (OSError, ValueError, RuntimeError, requests.RequestException) as exc:
             st.error(f"Horizons query failed: {exc}")
         else:
             ephemeris = pd.DataFrame(output)
