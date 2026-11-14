@@ -21,11 +21,11 @@ TIFF_HEADERS = (bytes.fromhex("49492a00"), bytes.fromhex("4d4d002a"))
 
 @dataclass(frozen=True, slots=True)
 class RasterMetadata:
-    """Raster inspection results plus a reproducible local-file provenance record."""
+    """Raster inspection results plus local-file metadata; timestamps are not NASA server timestamps."""
 
     path: str
     source_url: str | None
-    file_modified_at_utc: str
+    local_file_modified_at_utc: str
     file_size_bytes: int
     sha256: str
     width: int
@@ -63,7 +63,7 @@ def inspect_lola_geotiff(
     path: str | Path,
     *,
     source_url: str | None = None,
-    file_modified_at_utc: str | None = None,
+    local_file_modified_at_utc: str | None = None,
 ) -> RasterMetadata:
     """Inspect a GeoTIFF and check basic archive expectations.
 
@@ -81,7 +81,7 @@ def inspect_lola_geotiff(
         raise ValueError("Downloaded file does not have a valid TIFF header.")
 
     stat = file_path.stat()
-    timestamp = file_modified_at_utc or datetime.fromtimestamp(
+    timestamp = local_file_modified_at_utc or datetime.fromtimestamp(
         stat.st_mtime, tz=timezone.utc
     ).isoformat()
     checksum = _sha256_file(file_path)
@@ -114,7 +114,7 @@ def inspect_lola_geotiff(
             return RasterMetadata(
                 path=str(file_path),
                 source_url=source_url,
-                file_modified_at_utc=timestamp,
+                local_file_modified_at_utc=timestamp,
                 file_size_bytes=stat.st_size,
                 sha256=checksum,
                 width=dataset.width,
@@ -214,13 +214,13 @@ def download_lola_geotiff(
         inspect_lola_geotiff(
             temporary_path,
             source_url=url,
-            file_modified_at_utc=downloaded_at,
+            local_file_modified_at_utc=downloaded_at,
         )
         temporary_path.replace(destination)
         return inspect_lola_geotiff(
             destination,
             source_url=url,
-            file_modified_at_utc=downloaded_at,
+            local_file_modified_at_utc=downloaded_at,
         )
     finally:
         if temporary_path is not None:
