@@ -10,6 +10,7 @@
 - [x] Two-region comparison using the same product and bounded sample statistics.
 - [x] Comparison chart and CSV export.
 - [x] User-entered lunar observer coordinates and UTC date selection.
+- [x] Require explicit confirmation that observer-coordinate provenance has been checked before querying Horizons.
 - [x] JPL Horizons Sun/Earth ephemeris table, elevation plot, and CSV export.
 - [x] Visible explanations of assumptions and non-operational limitations.
 
