@@ -182,7 +182,13 @@ with compare_tab:
                                 "NoData / non-finite sampled pixels": summary.nodata_sample_count,
                             }
                         )
-            except (RuntimeError, ValueError) as exc:
+            except (
+                OSError,
+                RuntimeError,
+                ValueError,
+                requests.RequestException,
+                rasterio.errors.RasterioError,
+            ) as exc:
                 st.error(f"Comparison could not be completed: {exc}")
             else:
                 frame = pd.DataFrame(records)
