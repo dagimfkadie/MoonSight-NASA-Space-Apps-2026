@@ -5,7 +5,7 @@ import pytest
 import rasterio
 from rasterio.transform import from_origin
 
-from moonsight.terrain.preview import build_terrain_heatmap, load_terrain_preview
+from moonsight.terrain.preview import (\n    build_terrain_heatmap,\n    build_terrain_surface,\n    load_terrain_preview,\n)
 
 
 def write_raster(path: Path, values: np.ndarray, nodata: float = -9999.0):
@@ -68,3 +68,13 @@ def test_heatmap_uses_projected_axes_and_title(tmp_path: Path):
     assert figure.layout.title.text == "Sampled elevation"
     assert list(figure.data[0].x) == [102.5, 107.5]
     assert list(figure.data[0].y) == [197.5, 192.5]
+
+
+
+def test_3d_surface_uses_sampled_elevation_and_units(tmp_path: Path):
+    path = tmp_path / "elevation.tif"
+    write_raster(path, np.array([[10, 20], [30, 40]], dtype="float32"))
+    preview = load_terrain_preview(path, units="metres")
+    figure = build_terrain_surface(preview, title="Test lunar elevation")
+    assert figure.layout.title.text == "Test lunar elevation"
+    assert list(figure.data[0].z[0]) == [10.0, 20.0]
