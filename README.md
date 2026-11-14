@@ -12,7 +12,7 @@ MoonSight is a student-built research prototype intended to help users explore a
 
 Development is being carried out during the official 2026 NASA Space Apps Challenge period. This repository is a fresh implementation and does not import source code or pre-event implementation from the team's earlier prototype.
 
-The repository now includes a Streamlit interface, a catalog of NASA-listed study regions, a LOLA product URL registry, and a bounded GeoTIFF download/metadata-validation workflow. **The application, automated tests, and real NASA raster downloads have not yet been run and verified in a runtime environment.** No terrain interpretation or site ranking is currently produced.
+The repository includes a Streamlit interface, a NASA-listed study-region catalog, a LOLA product URL registry, a bounded GeoTIFF download and metadata-validation workflow, and sampled raster statistics. **The app and complete GitHub test suite have not yet been run from a clean checkout, and no real NASA raster has been validated in the development session.** No terrain interpretation or site ranking is currently produced.
 
 ## Planned capabilities
 
@@ -92,7 +92,7 @@ These are setup instructions, not evidence that the commands have already been r
 - NASA lunar polar illumination and Earth visibility resources: https://pgda.gsfc.nasa.gov/products/69
 - NASA Lunar Surface Data Book: https://ntrs.nasa.gov/citations/20250002845
 
-NASA's LOLA south-pole archive lists elevation, slope, spot-count, and uncertainty GeoTIFF products for its study regions. It describes the GeoTIFFs as 5 m/pixel. Each downloaded file must still be checked for its actual metadata and data quality before use.
+NASA's LOLA south-pole archive lists elevation, slope, spot-count, and uncertainty GeoTIFF products for six study regions. It describes the GeoTIFFs as 5 m/pixel. Each downloaded file must still be checked for its actual metadata and data quality before use.
 
 ## Competition compliance
 
