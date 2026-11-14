@@ -111,6 +111,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nasa-lola-site04-verification
-          path: nasa-lola-verification.json
+          path: |
+            nasa-lola-verification.json
+            Site04_final_adj_5mpp_surf.tif
           if-no-files-found: warn
           retention-days: 14
