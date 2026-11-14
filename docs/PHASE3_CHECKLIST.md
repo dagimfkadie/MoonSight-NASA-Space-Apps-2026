@@ -8,13 +8,14 @@
 | Bounded HTTP download | Implemented; live download from this environment remains unverified | `src/moonsight/data/downloader.py` |
 | Temporary-file and atomic-cache workflow | Implemented; not yet tested in a clean repository environment | `src/moonsight/data/downloader.py` |
 | TIFF header check | Implemented; unit tests written | `tests/test_downloader.py` |
-| Rasterio metadata inspection | Implemented; synthetic GeoTIFF test added | `src/moonsight/data/downloader.py`, `tests/test_downloader.py` |
+| Rasterio metadata inspection | Implemented; requires projected metre-based CRS and approximately 5 m pixels | `src/moonsight/data/downloader.py` |
+| Synthetic raster validation tests | Written; local focused CRS check passed | `tests/test_downloader.py` |
 | Bounded raster sample statistics | Implemented; three isolated tests passed | `src/moonsight/data/summary.py`, `tests/test_summary.py` |
 | Streamlit download and sample-statistics interface | Implemented; app not yet launched | `app.py` |
 
 ## Test note
 
-A local isolated test run of the newly added raster-summary module completed with **3 tests passed**. It used synthetic GeoTIFF files and the installed NumPy/Rasterio/Pytest packages. This does not replace running the complete test suite from a clean clone of this repository.
+A local isolated test run of the raster-summary module completed with **3 tests passed** using synthetic GeoTIFF files. A separate focused check confirmed that a projected metre-based test CRS is accepted and a geographic CRS is rejected. These are targeted checks, not a complete `pytest` run from a clean clone of this repository.
 
 ## NASA source facts
 
@@ -24,7 +25,7 @@ Official archive: https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/
 
 NASA product page: https://pgda.gsfc.nasa.gov/products/78
 
-The Site04 elevation filename is `Site04_final_adj_5mpp_surf.tif`. The official archive's linked file path is under the Site04 directory. The browser retrieval service used for this development session cannot download the TIFF media type, and a direct container download attempt also failed. Therefore no real raster has yet been retrieved or validated in this session.
+The Site04 elevation filename is `Site04_final_adj_5mpp_surf.tif`. The official archive links to it under the Site04 directory. The browser retrieval service used for this development session cannot download the TIFF media type, and a direct container download attempt also failed. Therefore no real raster has yet been retrieved or validated in this session.
 
 ## Validation policy
 
@@ -32,7 +33,8 @@ The Site04 elevation filename is `Site04_final_adj_5mpp_surf.tif`. The official 
 - Enforce a configurable maximum download size (default 512 MiB).
 - Download to a temporary file and move it into the cache only after validation.
 - Require Rasterio to open the file.
-- Require a coordinate reference system and positive raster dimensions.
+- Require a projected coordinate reference system with metre units.
+- Require positive raster dimensions.
 - Check for approximately 5 m pixels before accepting the file.
 - Record file path, dimensions, band count, CRS, pixel size, bounds, data type, and NoData value.
 - Calculate descriptive statistics from a bounded nearest-neighbour sample, not the entire raster.
@@ -54,4 +56,4 @@ The Site04 elevation filename is `Site04_final_adj_5mpp_surf.tif`. The official 
 
 ## Current status
 
-**Data retrieval and summary code committed; synthetic tests for the summary module passed in an isolated environment.** A real NASA raster, the full GitHub checkout, and the Streamlit app remain unverified. MoonSight does not yet produce site rankings or landing-safety conclusions.
+**Data retrieval and sample-statistics code committed; targeted synthetic tests passed.** A real NASA raster, the full GitHub checkout, and the Streamlit app remain unverified. MoonSight does not yet produce site rankings or landing-safety conclusions.
