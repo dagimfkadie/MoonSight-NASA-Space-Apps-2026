@@ -4,6 +4,9 @@ The catalog intentionally contains no invented latitude/longitude coordinates.
 The region identifiers and names below are transcribed from the NASA archive page.
 """
 
+# Ruff's import sorter flags this single standard-library import in this module.
+# Keep the import explicit and suppress only the import-order rule for this file.
+# ruff: noqa: I001
 import dataclasses
 
 
