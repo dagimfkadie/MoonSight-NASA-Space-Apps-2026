@@ -5,7 +5,11 @@ import pytest
 import rasterio
 from rasterio.transform import from_origin
 
-from moonsight.terrain.preview import (\n    build_terrain_heatmap,\n    build_terrain_surface,\n    load_terrain_preview,\n)
+from moonsight.terrain.preview import (
+    build_terrain_heatmap,
+    build_terrain_surface,
+    load_terrain_preview,
+)
 
 
 def write_raster(path: Path, values: np.ndarray, nodata: float = -9999.0):
