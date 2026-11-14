@@ -36,7 +36,7 @@ The checked-in tests currently cover the following:
 | TIFF / raster inspection | `tests/test_downloader.py` | Classic TIFF header acceptance, invalid header rejection, missing file handling, synthetic projected raster metadata and rejection of a geographic CRS | Live NASA downloads, NASA-specific lunar CRS identity, all archive metadata or complete HTTP/cache behavior |
 | Raster summaries | `tests/test_summary.py` | Synthetic raster statistics, NoData exclusion, all-NoData rejection and invalid sample-size rejection | Full-resolution statistics, live archive values or independent scientific accuracy of NASA source products |
 | Horizons parser/client | `tests/test_horizons.py` | CSV parsing, unavailable angle handling, missing delimiter rejection, invalid input rejection and request construction using a fake session | Live Horizons service behavior, actual coordinate correctness or independent ephemeris agreement |
-| Terrain preview | No `tests/test_preview.py` file was found at the checked path | Not covered by a dedicated test file at that path | Coordinate axes, masking, heatmap/surface behavior and rotated-raster handling require dedicated tests |
+| Terrain preview | `tests/test_terrain_preview.py` | Pixel-centre coordinates, NoData masking, bounded sampling, heatmap axes and sampled surface values | Does not verify a live NASA raster's lunar CRS or scientific suitability |
 
 The downloader test uses a synthetic raster with `EPSG:3031` and a 5 m pixel size. This is a test fixture for generic projected-metre validation; it is **not** a lunar CRS and must not be presented as evidence that MoonSight validates the NASA MOON_ME / DE421 reference definition.
 
@@ -186,11 +186,11 @@ Create one record per live source or independent comparison. Do not mark a recor
 
 ## 8. Current validation status
 
-The following status reflects the checked-in implementation and test files, not a claim that a full validation campaign has been performed.
+The following status distinguishes automated software checks from live data and scientific validation. GitHub Actions passed for PR head `f317ccfba578fc1b847f224184ec4d89f068268b` before merge; its workflow installs dependencies in a clean Ubuntu/Python 3.11 environment, compiles sources, runs Ruff and executes the complete pytest suite, including the Streamlit AppTest startup smoke test.
 
 | Validation item | Status |
 |---|---|
-| Catalogue and input rejection unit tests | Implemented in test files; execution status not asserted here |
+| Synthetic TIFF inspection tests | Implemented; does not validate lunar CRS |
 | Synthetic TIFF inspection tests | Implemented; does not validate lunar CRS |
 | Synthetic raster summary tests | Implemented |
 | Horizons parser and fake-session request tests | Implemented; no live-service proof |
