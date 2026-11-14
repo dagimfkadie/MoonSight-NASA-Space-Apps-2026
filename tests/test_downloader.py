@@ -62,3 +62,22 @@ def test_inspector_reads_valid_five_metre_geotiff(tmp_path: Path):
     assert metadata.pixel_height == 5.0
     assert metadata.crs == "EPSG:3031"
     assert metadata.data_type == "float32"
+
+
+def test_inspector_rejects_geographic_coordinate_system(tmp_path: Path):
+    raster_path = tmp_path / "geographic-test.tif"
+    with rasterio.open(
+        raster_path,
+        "w",
+        driver="GTiff",
+        width=4,
+        height=3,
+        count=1,
+        dtype="float32",
+        crs="EPSG:4326",
+        transform=from_origin(100.0, 200.0, 5.0, 5.0),
+    ) as dataset:
+        dataset.write(np.ones((3, 4), dtype="float32"), 1)
+
+    with pytest.raises(ValueError, match="projected south-polar stereographic"):
+        inspect_lola_geotiff(raster_path)
