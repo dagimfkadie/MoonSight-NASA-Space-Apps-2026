@@ -18,7 +18,7 @@ import requests
 from moonsight.data.lola import LolaProduct, build_lola_product_url
 
 DEFAULT_MAX_DOWNLOAD_BYTES = 512 * 1024 * 1024
-TIFF_HEADERS = (b"II*\x00", b"MM\x00*")
+TIFF_HEADERS = (b"II*\\x00", b"MM\\x00*")
 
 
 @dataclass(frozen=True, slots=True)
@@ -63,6 +63,16 @@ def inspect_lola_geotiff(path: str | Path) -> RasterMetadata:
                 raise ValueError("Raster has invalid dimensions or no data bands.")
             if dataset.crs is None:
                 raise ValueError("Raster is missing its coordinate reference system.")
+            if not dataset.crs.is_projected:
+                raise ValueError(
+                    "Expected a projected south-polar stereographic coordinate system."
+                )
+            linear_units = (dataset.crs.linear_units or "").lower()
+            if linear_units not in {"metre", "meter", "metres", "meters"}:
+                raise ValueError(
+                    "Expected projected coordinates measured in metres; "
+                    f"received {linear_units or 'unknown units'}."
+                )
 
             pixel_width = abs(float(dataset.transform.a))
             pixel_height = abs(float(dataset.transform.e))
