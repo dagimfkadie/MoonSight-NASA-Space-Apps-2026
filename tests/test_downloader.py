@@ -79,5 +79,5 @@ def test_inspector_rejects_geographic_coordinate_system(tmp_path: Path):
     ) as dataset:
         dataset.write(np.ones((3, 4), dtype="float32"), 1)
 
-    with pytest.raises(ValueError, match="projected south-polar stereographic"):
+    with pytest.raises(ValueError, match="projected coordinate reference system"):
         inspect_lola_geotiff(raster_path)
