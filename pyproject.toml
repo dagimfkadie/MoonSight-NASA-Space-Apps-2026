@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "moonsight-lunar-navigator"
+version = "0.1.0"
+description = "Educational lunar south-pole study-site exploration prototype"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+dependencies = [
+  "streamlit>=1.40,<2.0",
+  "numpy>=1.26,<3.0",
+  "pandas>=2.2,<4.0",
+  "plotly>=5.24,<7.0",
+  "requests>=2.32,<3.0",
+  "rasterio>=1.4,<2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0,<10.0",
+  "ruff>=0.8,<1.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
