@@ -20,7 +20,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install raster inspection tools
-        run: python -m pip install --upgrade pip rasterio
+        run: python -m pip install --upgrade pip rasterio requests
 
       - name: Download and inspect NASA Site04 elevation GeoTIFF
         env:
