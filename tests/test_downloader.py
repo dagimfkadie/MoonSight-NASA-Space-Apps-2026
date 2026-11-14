@@ -16,7 +16,7 @@ def test_accepts_classic_tiff_headers(header):
     assert _has_tiff_header(header)
 
 
-@pytest.mark.parametrize("header", [b"", b"HTML", bytes.fromhex("504b0304"), b"II+\\x00"])
+@pytest.mark.parametrize("header", [b"", b"HTML", bytes.fromhex("504b0304"), bytes.fromhex("49492b00")])
 def test_rejects_non_tiff_headers(header):
     assert not _has_tiff_header(header)
 
