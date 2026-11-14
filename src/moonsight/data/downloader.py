@@ -18,7 +18,7 @@ import requests
 from moonsight.data.lola import LolaProduct, build_lola_product_url
 
 DEFAULT_MAX_DOWNLOAD_BYTES = 512 * 1024 * 1024
-TIFF_HEADERS = (b"II*\\x00", b"MM\\x00*")
+TIFF_HEADERS = (bytes.fromhex("49492a00"), bytes.fromhex("4d4d002a"))
 
 
 @dataclass(frozen=True, slots=True)
