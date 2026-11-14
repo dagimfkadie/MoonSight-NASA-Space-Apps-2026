@@ -80,3 +80,11 @@ def test_horizons_request_uses_moon_surface_observer_and_correct_coordinate_orde
     assert session.params["CENTER"] == "coord@301"
     assert session.params["SITE_COORD"] == "12.50000000,-88.20000000,0.15000"
     assert session.params["QUANTITIES"] == "4"
+
+
+def test_horizons_preserves_negative_longitude_as_west_longitude():
+    session = FakeSession()
+    fetch_lunar_observer_ephemeris(
+        "Sun", -90.0, -89.0, 0.0, date(2026, 11, 14), session=session
+    )
+    assert session.params["SITE_COORD"] == "-90.00000000,-89.00000000,0.00000"

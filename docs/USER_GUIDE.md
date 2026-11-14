@@ -81,7 +81,7 @@ The comparison uses the same product type for both regions. It does not normaliz
 ## 5. Sun & Earth geometry
 
 1. Open **Sun & Earth geometry**.
-2. Enter east longitude in degrees, latitude in degrees, and altitude in kilometres for a lunar surface observer.
+2. Enter longitude in degrees, latitude in degrees, and altitude in kilometres above the reference ellipsoid used by Horizons for lunar geodetic coordinates. Positive longitude is east; negative longitude is west (for example, -90° is equivalent to 270° east). Altitude is not local terrain elevation.
 3. Choose a UTC start date and a duration of one to three days.
 4. Confirm the checkbox only after independently verifying the coordinate provenance and convention.
 5. Select **Retrieve Sun and Earth ephemerides**.
@@ -122,6 +122,8 @@ Primary sources:
 - Do not equate geometric Earth visibility with communications feasibility.
 - Do not equate geometric Sun elevation with illumination duration or solar-power availability.
 
-## 9. Current verification caveat
+## 9. Current verification status
 
-The repository documentation records that live NASA raster retrieval, exact lunar CRS verification, live JPL Horizons requests, clean-environment installation, full browser interaction, and complete test execution still require verification. The presence of a feature in this guide describes the committed interface and code path; it is not a claim that every live service has been successfully tested.
+GitHub Actions passed for the PR head commit `f317ccfba578fc1b847f224184ec4d89f068268b` before it was merged. CI installs the project in a clean Ubuntu/Python 3.11 environment, compiles the Python sources, runs Ruff, and executes pytest, including the Streamlit AppTest startup smoke test.
+
+This confirms the automated software checks, not live scientific validation. Live NASA raster retrieval, exact MOON_ME / DE421 CRS verification, live JPL Horizons requests, independent ephemeris comparison, and full browser/mobile interaction still require separate testing. The presence of a feature in this guide describes the committed interface and code path; it is not proof that every live service has been successfully tested.

@@ -72,7 +72,7 @@ def test_download_saves_validated_file_and_provenance(tmp_path, monkeypatch):
     assert metadata.width == 4
     assert metadata.height == 3
     assert metadata.crs_wkt
-    assert metadata.file_modified_at_utc.endswith("+00:00")
+    assert metadata.local_file_modified_at_utc.endswith("+00:00")
 
 
 def test_download_reuses_valid_cached_file_without_network(tmp_path, monkeypatch):
