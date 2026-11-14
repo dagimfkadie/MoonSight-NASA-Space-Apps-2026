@@ -60,7 +60,7 @@ Potential value is educational and exploratory. Any use in mission planning woul
 - The application does not calculate landing safety, site suitability, mission feasibility or an approved landing-site ranking.
 - Raster statistics and visualizations use bounded nearest-neighbour samples, not full-resolution analysis.
 - The downloader does not yet verify the exact complete MOON_ME / DE421 CRS definition against NASA's authoritative metadata.
-- Live NASA data retrieval and live JPL Horizons calls require verification in the final deployment environment.
+- A separate GitHub Actions workflow has successfully retrieved and opened one live NASA Site04 elevation GeoTIFF; exact MOON_ME / DE421 CRS identity remains unverified. Live JPL Horizons calls and independent ephemeris comparison remain pending.
 - Horizons azimuth/elevation does not account for local terrain obstruction.
 - No illumination-duration model, surface-panel power estimate, terrain-aware communications model or radio link budget is implemented.
 - Synthetic unit tests do not constitute independent scientific validation.
