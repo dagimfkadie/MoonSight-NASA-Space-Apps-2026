@@ -2,6 +2,8 @@
 
 import streamlit as st
 
+from moonsight.terrain.preview import build_terrain_heatmap, load_terrain_preview
+
 from moonsight.catalog import LOLA_STUDY_SITES
 from moonsight.data.downloader import download_lola_geotiff
 from moonsight.data.summary import summarize_lola_raster
@@ -67,6 +69,8 @@ if st.button("Download and inspect NASA data", type="primary"):
             selected_product = product_labels[selected_product_label]
             metadata = download_lola_geotiff(selected_site_id, selected_product)
             sample_summary = summarize_lola_raster(metadata.path, selected_product)
+            product_units = sample_summary.units
+            preview = load_terrain_preview(metadata.path, units=product_units)
         except Exception as exc:
             st.error(f"Data retrieval or validation failed: {exc}")
         else:
@@ -79,6 +83,19 @@ if st.button("Download and inspect NASA data", type="primary"):
                 "of the raster—not every pixel in the complete study region."
             )
             st.json(sample_summary.to_dict())
+            st.subheader("Sampled terrain heatmap")
+            st.caption(
+                f"Displaying {preview.sample_width} × {preview.sample_height} sampled pixels "
+                f"from the source raster ({preview.source_width} × {preview.source_height}). "
+                "Blank cells represent NoData or non-finite values. Coordinates are "
+                "projected lunar-grid coordinates in metres, not latitude/longitude."
+            )
+            figure = build_terrain_heatmap(
+                preview,
+                title=f"{selected_label} — {selected_product_label}",
+                colorbar_title=product_units,
+            )
+            st.plotly_chart(figure, use_container_width=True)
             st.warning(
                 "These are descriptive data checks, not a scientific quality "
                 "assessment or a landing-safety conclusion."
