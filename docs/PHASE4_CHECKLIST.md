@@ -7,6 +7,7 @@
 - [x] Sun (target 10) and Earth (target 399) request support.
 - [x] Apparent azimuth/elevation quantity 4, airless setting, UTC time.
 - [x] CSV ephemeris parsing with missing-angle handling.
+- [x] Validate the JPL Horizons JSON signature/version before accepting a result.
 - [x] Input validation for longitude, latitude, altitude, target and request duration.
 - [x] Network/API error handling.
 - [x] Unit tests using synthetic response fixtures and a fake HTTP session.
