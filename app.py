@@ -98,6 +98,24 @@ with terrain_tab:
                     "not a full-resolution statistical analysis."
                 )
                 st.json(summary.to_dict())
+                st.subheader("Sampled map grid")
+                st.caption(
+                    "Coordinates are projected map coordinates at sampled pixel centres. "
+                    "The displayed grid is downsampled; its spacing is larger than the "
+                    "source raster's nominal 5 m pixels when the source exceeds 512 pixels."
+                )
+                st.json(
+                    {
+                        "coordinate_reference_name": preview.crs_name,
+                        "sample_width_pixels": preview.sample_width,
+                        "sample_height_pixels": preview.sample_height,
+                        "sample_pixel_width_metres": preview.sample_pixel_width_m,
+                        "sample_pixel_height_metres": preview.sample_pixel_height_m,
+                        "raster_bounds_metres_left_bottom_right_top": preview.bounds_m,
+                        "valid_sample_pixels": preview.valid_pixel_count,
+                        "missing_sample_pixels": preview.nodata_pixel_count,
+                    }
+                )
                 st.subheader("2D product heatmap")
                 st.plotly_chart(
                     build_terrain_heatmap(
