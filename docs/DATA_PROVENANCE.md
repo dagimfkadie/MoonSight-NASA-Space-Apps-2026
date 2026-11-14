@@ -110,7 +110,7 @@ These are statistics of the sampled grid, not full-resolution statistics for the
 
 `load_terrain_preview()` also reads a bounded nearest-neighbour sample, masks NoData/non-finite values, and calculates projected X/Y pixel-centre coordinates for display. The application renders a 2-D heatmap and, for elevation, a 3-D surface.
 
-The previews are visual aids. They are not a terrain-hazard model, a high-resolution landing simulation, or evidence of safe slopes/obstacles. Plot perspective and vertical scaling can affect visual interpretation.
+The previews are visual aids. They are not a terrain-hazard model, a high-resolution landing simulation, or evidence of safe slopes/obstacles. Plot perspective and vertical scaling can affect visual interpretation. The terrain explorer also reports the CRS name, sampled-grid dimensions, effective sampled pixel spacing, source raster bounds in projected metres, and valid/missing sample counts. Sample coordinates are calculated at pixel centres from the raster affine transform; the CRS name is descriptive metadata and is not a substitute for exact MOON_ME / DE421 verification.
 
 ## 5. NASA/JPL Horizons observer ephemerides
 
