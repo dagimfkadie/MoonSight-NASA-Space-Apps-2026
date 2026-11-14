@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import numpy as np
 import pytest
 import rasterio
 from rasterio.transform import from_origin
@@ -46,7 +47,11 @@ def test_inspector_reads_valid_five_metre_geotiff(tmp_path: Path):
         crs="EPSG:3031",
         transform=from_origin(100.0, 200.0, 5.0, 5.0),
     ) as dataset:
-        dataset.write([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]], 1)
+        values = np.array(
+            [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]],
+            dtype="float32",
+        )
+        dataset.write(values, 1)
 
     metadata = inspect_lola_geotiff(raster_path)
 
