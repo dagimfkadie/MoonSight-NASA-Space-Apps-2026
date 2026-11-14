@@ -12,7 +12,7 @@ MoonSight is an educational prototype for exploring NASA lunar south-pole terrai
 
 The Streamlit app provides four tabs:
 
-1. **Terrain explorer:** select one of six NASA LOLA study-region product groups; download and inspect a GeoTIFF; view bounded sample statistics and a 2-D heatmap. Elevation products also have a 3-D sampled surface.
+1. **Terrain explorer:** select one of six NASA LOLA study-region product groups; download and inspect a GeoTIFF; view bounded sample statistics and a 2-D heatmap. Elevation products also have a 3-D sampled surface. The app exposes the direct NASA source link and a JSON provenance record with file size, SHA-256, CRS WKT and raster transform.
 2. **Compare regions:** compare descriptive sample statistics for the same product across two regions and export the table as CSV.
 3. **Sun & Earth geometry:** enter a lunar geodetic observer coordinate and request apparent azimuth/elevation for the Sun and Earth from JPL Horizons. Results can be exported as CSV.
 4. **Data & limitations:** source descriptions, assumptions and scientific limitations.
@@ -24,6 +24,7 @@ The Horizons coordinates are explicitly user-entered. The app does not invent la
 - Repository foundation, data modules, Streamlit UI, and tests are committed.
 - Focused synthetic terrain tests and isolated raster-summary checks were previously recorded in `docs/PHASE3_CHECKLIST.md`.
 - Horizons tests use synthetic API response fixtures and a fake HTTP session; they do not prove that a live Horizons request succeeds.
+- Synthetic tests now cover the LOLA URL mapping, mocked download/cache flow, and raster provenance fields; these new tests have not yet been executed in a clean environment.
 - The full repository test suite, Ruff, Streamlit launch, live NASA GeoTIFF retrieval, and live JPL Horizons requests still require verification in a clean environment.
 - No real NASA raster has yet been validated in this development session.
 - No terrain-aware horizon obstruction, site ranking, or landing-safety score is implemented.
