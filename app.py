@@ -83,12 +83,12 @@ if st.button("Download and inspect NASA data", type="primary"):
                 "of the raster—not every pixel in the complete study region."
             )
             st.json(sample_summary.to_dict())
-            st.subheader("Sampled terrain heatmap")
+            st.subheader("Sampled LOLA product heatmap")
             st.caption(
                 f"Displaying {preview.sample_width} × {preview.sample_height} sampled pixels "
                 f"from the source raster ({preview.source_width} × {preview.source_height}). "
                 "Blank cells represent NoData or non-finite values. Coordinates are "
-                "projected lunar-grid coordinates in metres, not latitude/longitude."
+                "projected coordinates in metres, not latitude/longitude. The CRS shown in the metadata must be checked against NASA's stated lunar reference frame before interpreting these as verified lunar-grid coordinates."
             )
             figure = build_terrain_heatmap(
                 preview,
