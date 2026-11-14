@@ -6,7 +6,6 @@ The region identifiers and names below are transcribed from the NASA archive pag
 
 from dataclasses import dataclass
 
-
 NASA_LOLA_SITES_URL = "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/"
 
 
