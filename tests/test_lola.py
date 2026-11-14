@@ -1,7 +1,6 @@
 import pytest
 from moonsight.data.lola import build_lola_product_url
 
-
 NASA_ARCHIVE = "https://pgda.gsfc.nasa.gov/data/LOLA_5mpp/"
 
 
