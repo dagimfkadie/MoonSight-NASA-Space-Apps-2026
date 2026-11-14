@@ -236,7 +236,7 @@ with geometry_tab:
                                 "Elevation (°)": position.elevation_deg,
                             }
                         )
-        except Exception as exc:
+        except (RuntimeError, TypeError, ValueError) as exc:
             st.error(f"Horizons query failed: {exc}")
         else:
             ephemeris = pd.DataFrame(output)
