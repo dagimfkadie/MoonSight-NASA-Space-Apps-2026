@@ -11,6 +11,8 @@
 | Rasterio metadata inspection | Implemented; requires projected metre-based CRS and approximately 5 m pixels | `src/moonsight/data/downloader.py` |
 | Synthetic raster validation tests | Written; local focused CRS check passed | `tests/test_downloader.py` |
 | Bounded raster sample statistics | Implemented; three isolated tests passed | `src/moonsight/data/summary.py`, `tests/test_summary.py` |
+| Bounded terrain heatmap preview | Implemented; test cases added, full test run pending | `src/moonsight/terrain/preview.py`, `tests/test_terrain_preview.py` |
+| Streamlit terrain heatmap display | Implemented; app launch pending | `app.py` |
 | Streamlit download and sample-statistics interface | Implemented; app not yet launched | `app.py` |
 
 ## Test note
@@ -42,10 +44,14 @@ The Site04 elevation filename is `Site04_final_adj_5mpp_surf.tif`. The official 
 - Label all sample statistics clearly; they are not full-raster summaries or landing criteria.
 - Do not interpret metadata validation as proof of terrain quality or landing suitability.
 
+## Additional engineering correction
+
+During code review, the TIFF byte-order/magic signatures were found to be represented incorrectly as escaped text in Python byte literals. They have been replaced with exact four-byte hexadecimal signatures, and the positive/negative header tests now use exact byte sequences. This fix is committed; the full test suite still needs to be run from a clean checkout.
+
 ## Remaining work
 
 - [ ] Install the package and dependencies in a clean environment.
-- [ ] Run the complete `pytest` suite from the GitHub checkout.
+- [ ] Run the complete `pytest` suite from the GitHub checkout, including the new terrain-preview tests.
 - [ ] Run `ruff check .` and fix any findings.
 - [ ] Launch the Streamlit app.
 - [ ] Download one real NASA product (start with Site04 elevation) from the app and record its metadata.
