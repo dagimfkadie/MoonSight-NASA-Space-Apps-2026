@@ -51,7 +51,7 @@ This formula is only a general definition. MoonSight should prefer the archived 
 
 ## 3. Sun and Earth geometry
 
-JPL Horizons observer ephemerides can return apparent azimuth and elevation for a correctly defined topocentric observer. The application must explicitly configure and validate the lunar observer location, time scale, target, reference settings, and output quantities.
+JPL Horizons observer ephemerides can return apparent azimuth and elevation for a correctly defined topocentric observer. MoonSight requests observer-table quantity 4 for targets Sun (ID 10) and Earth (ID 399), with `CENTER=coord@301`, `COORD_TYPE=GEODETIC`, `SITE_COORD=east longitude,latitude,altitude in km`, `APPARENT=AIRLESS`, and UTC time tags. The app requires users to confirm that the coordinates are documented; it does not infer them from a LOLA tile ID. The client checks the API signature/version and parses the CSV ephemeris table.
 
 - Azimuth is conventionally measured clockwise from north.
 - Elevation is measured relative to the local plane perpendicular to the zenith direction.
