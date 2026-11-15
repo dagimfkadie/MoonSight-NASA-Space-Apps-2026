@@ -62,6 +62,28 @@ with terrain_tab:
         selected_site_label = st.selectbox("Study region", list(site_options))
     with col2:
         selected_product_label = st.selectbox("LOLA product", list(PRODUCTS))
+    control1, control2, control3 = st.columns(3)
+    with control1:
+        color_scale = st.selectbox(
+            "Heatmap colour scale",
+            ["Viridis", "Cividis", "Plasma", "Inferno", "Turbo"],
+            help="Choose how raster values are represented by colour.",
+        )
+    with control2:
+        preview_resolution = st.slider(
+            "Preview resolution (maximum dimension)",
+            min_value=128,
+            max_value=512,
+            value=384,
+            step=64,
+            help="Higher values show more sampled pixels but may take longer to render.",
+        )
+    with control3:
+        show_3d_surface = st.checkbox(
+            "Show 3D elevation surface",
+            value=True,
+            help="Available for elevation products only.",
+        )
     st.caption(
         "NASA lists these products as 5 m/pixel south-polar stereographic GeoTIFFs "
         "in the MOON_ME reference frame tied to DE421. MoonSight still checks the "
@@ -75,7 +97,9 @@ with terrain_tab:
             try:
                 metadata = download_lola_geotiff(site_id, product)
                 summary = summarize_lola_raster(metadata.path, product)
-                preview = load_terrain_preview(metadata.path, units=units)
+                preview = load_terrain_preview(
+                    metadata.path, units=units, max_dimension=preview_resolution
+                )
             except (OSError, ValueError, requests.RequestException, rasterio.errors.RasterioError) as exc:
                 st.error(f"Download or raster processing failed: {exc}")
             else:
@@ -119,21 +143,26 @@ with terrain_tab:
                     }
                 )
                 st.subheader("2D product heatmap")
-                st.plotly_chart(
-                    build_terrain_heatmap(
-                        preview,
-                        title=f"{selected_site_label} — {selected_product_label}",
-                        colorbar_title=units,
-                    ),
-                    use_container_width=True,
+                heatmap = build_terrain_heatmap(
+                    preview,
+                    title=f"{selected_site_label} — {selected_product_label}",
+                    colorbar_title=units,
                 )
-                if product == "elevation":
+                heatmap.update_traces(colorscale=color_scale)
+                st.plotly_chart(
+                    heatmap,
+                    use_container_width=True,
+                    key="terrain_heatmap",
+                )
+                if product == "elevation" and show_3d_surface:
                     st.subheader("3D sampled elevation surface")
+                    surface = build_terrain_surface(
+                        preview, title=f"{selected_site_label} — sampled elevation"
+                    )
                     st.plotly_chart(
-                        build_terrain_surface(
-                            preview, title=f"{selected_site_label} — sampled elevation"
-                        ),
+                        surface,
                         use_container_width=True,
+                        key="terrain_surface",
                     )
                 st.info(
                     "The 3D surface is a downsampled visualization. Vertical exaggeration "
@@ -157,6 +186,11 @@ with compare_tab:
         )
     compare_product_label = st.selectbox(
         "Product to compare", list(PRODUCTS), key="compare_product"
+    )
+    metric = st.selectbox(
+        "Chart statistic",
+        ["Mean", "Median", "95th percentile", "Minimum", "Maximum"],
+        key="compare_metric",
     )
     if st.button("Compare selected regions"):
         product, units = PRODUCTS[compare_product_label]
@@ -193,11 +227,6 @@ with compare_tab:
             else:
                 frame = pd.DataFrame(records)
                 st.dataframe(frame, use_container_width=True, hide_index=True)
-                metric = st.selectbox(
-                    "Chart statistic",
-                    ["Mean", "Median", "95th percentile", "Minimum", "Maximum"],
-                    key="compare_metric",
-                )
                 fig = px.bar(
                     frame,
                     x="Region",
