@@ -1,0 +1,254 @@
+/* MoonSight visual system — responsive dark lunar-science interface. */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+  color-scheme: dark;
+  --moon-bg: #080d1b;
+  --moon-bg-soft: #101a31;
+  --moon-panel: rgba(19, 29, 53, .82);
+  --moon-panel-strong: rgba(24, 37, 65, .94);
+  --moon-border: rgba(154, 178, 226, .18);
+  --moon-border-bright: rgba(114, 228, 242, .36);
+  --moon-text: #edf3ff;
+  --moon-muted: #aebbd4;
+  --moon-cyan: #72e4f2;
+  --moon-violet: #a99bff;
+  --moon-shadow: 0 16px 42px rgba(0, 0, 0, .22);
+}
+
+html, body, [class*="css"] {
+  font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+.stApp {
+  color: var(--moon-text);
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(66, 91, 161, .24), transparent 34%),
+    radial-gradient(ellipse at 92% 10%, rgba(91, 67, 150, .18), transparent 30%),
+    linear-gradient(145deg, var(--moon-bg) 0%, var(--moon-bg-soft) 48%, #0b1020 100%);
+}
+
+[data-testid="stAppViewContainer"] > .main {
+  background: transparent;
+}
+
+[data-testid="stMainBlockContainer"] {
+  max-width: 1500px;
+  padding-top: 2.2rem;
+  padding-bottom: 3rem;
+}
+
+h1, h2, h3, [data-testid="stHeading"] {
+  color: #f4f7ff;
+  font-family: 'Space Grotesk', 'DM Sans', sans-serif !important;
+  letter-spacing: -.035em;
+}
+
+h1 {
+  font-size: clamp(2.3rem, 5vw, 3.8rem) !important;
+  line-height: 1.08 !important;
+  margin-bottom: .35rem !important;
+}
+
+h2 { color: #dce8ff !important; }
+h3 { color: #d4e3ff !important; }
+
+p, li, label, [data-testid="stMarkdownContainer"] {
+  color: #d8e2f5;
+}
+
+[data-testid="stCaptionContainer"] {
+  color: var(--moon-muted);
+  font-size: .86rem;
+}
+
+[data-testid="stHeader"] {
+  background: rgba(8, 13, 27, .72);
+  backdrop-filter: blur(14px);
+}
+
+[data-testid="stToolbar"] {
+  right: 1rem;
+}
+
+[data-testid="stTabs"] [role="tablist"] {
+  gap: .45rem;
+  border-bottom: 1px solid var(--moon-border);
+  padding-bottom: .15rem;
+}
+
+[data-testid="stTabs"] button[role="tab"] {
+  border-radius: 12px 12px 0 0;
+  padding: .8rem 1rem;
+  color: #b9c8e7;
+  font-weight: 650;
+  transition: color .18s ease, background .18s ease;
+}
+
+[data-testid="stTabs"] button[role="tab"]:hover {
+  color: var(--moon-cyan);
+  background: rgba(114, 228, 242, .06);
+}
+
+[data-testid="stTabs"] button[aria-selected="true"] {
+  color: var(--moon-cyan) !important;
+  border-bottom: 3px solid var(--moon-cyan) !important;
+  background: rgba(114, 228, 242, .08);
+}
+
+[data-testid="stVerticalBlockBorderWrapper"],
+[data-testid="stExpander"],
+[data-testid="stMetric"],
+[data-testid="stDataFrame"],
+[data-testid="stTable"] {
+  border: 1px solid var(--moon-border);
+  border-radius: 18px;
+  background: var(--moon-panel);
+  box-shadow: var(--moon-shadow);
+}
+
+[data-testid="stMetric"] {
+  padding: 1rem 1.1rem;
+}
+
+[data-testid="stMetricLabel"] { color: var(--moon-muted) !important; }
+[data-testid="stMetricValue"] { color: #f3f7ff !important; }
+
+[data-testid="stExpander"] summary {
+  color: #e6efff;
+  font-weight: 600;
+}
+
+.stButton > button,
+.stDownloadButton > button,
+[data-testid="stFormSubmitButton"] > button {
+  min-height: 2.65rem;
+  border: 1px solid rgba(114, 228, 242, .45);
+  border-radius: 12px;
+  background: linear-gradient(110deg, #176d86, #514a9b);
+  color: #fff;
+  font-weight: 700;
+  padding: .65rem 1.15rem;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.stButton > button:hover,
+.stDownloadButton > button:hover,
+[data-testid="stFormSubmitButton"] > button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(66, 197, 222, .2);
+  border-color: var(--moon-cyan);
+  color: #fff;
+}
+
+.stButton > button:focus-visible,
+.stDownloadButton > button:focus-visible {
+  outline: 2px solid var(--moon-cyan);
+  outline-offset: 3px;
+}
+
+[data-baseweb="select"] > div,
+[data-baseweb="input"] > div,
+[data-baseweb="textarea"] > div {
+  background: rgba(17, 27, 49, .9);
+  border-color: var(--moon-border);
+  border-radius: 11px;
+}
+
+[data-baseweb="popover"],
+[data-baseweb="menu"] {
+  background: var(--moon-panel-strong);
+  border: 1px solid var(--moon-border);
+  border-radius: 12px;
+}
+
+input, textarea {
+  color: var(--moon-text) !important;
+}
+
+[data-testid="stCheckbox"] label,
+[data-testid="stRadio"] label {
+  color: #d8e2f5;
+}
+
+[data-testid="stAlert"] {
+  border-radius: 14px;
+  border: 1px solid var(--moon-border);
+  background: rgba(18, 31, 55, .72);
+}
+
+[data-testid="stPlotlyChart"] {
+  border: 1px solid var(--moon-border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(14, 23, 43, .7);
+  padding: .25rem;
+  box-shadow: var(--moon-shadow);
+}
+
+[data-testid="stDataFrame"] {
+  overflow: hidden;
+}
+
+a {
+  color: var(--moon-cyan) !important;
+  text-decoration-color: rgba(114, 228, 242, .45) !important;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: #c0f7ff !important;
+  text-decoration-color: currentColor !important;
+}
+
+hr {
+  border-color: var(--moon-border);
+  margin: 2rem 0;
+}
+
+::selection {
+  color: #07111d;
+  background: var(--moon-cyan);
+}
+
+@media (max-width: 900px) {
+  [data-testid="stMainBlockContainer"] {
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
+  }
+}
+
+@media (max-width: 700px) {
+  [data-testid="stTabs"] [role="tablist"] {
+    gap: .15rem;
+  }
+
+  [data-testid="stTabs"] button[role="tab"] {
+    padding: .6rem .45rem;
+    font-size: .76rem;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 10vw, 2.8rem) !important;
+  }
+
+  [data-testid="stMetric"] {
+    padding: .8rem;
+  }
+
+  .stButton > button,
+  .stDownloadButton > button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
