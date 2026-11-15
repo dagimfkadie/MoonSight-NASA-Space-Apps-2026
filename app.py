@@ -29,6 +29,100 @@ st.set_page_config(
     layout="wide",
 )
 
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+    :root {
+      --moon-bg: #080d1b;
+      --moon-panel: rgba(19, 29, 53, .82);
+      --moon-border: rgba(154, 178, 226, .18);
+      --moon-cyan: #72e4f2;
+      --moon-violet: #a99bff;
+    }
+    .stApp {
+      background:
+        radial-gradient(ellipse at 12% 0%, rgba(66, 91, 161, .24), transparent 34%),
+        radial-gradient(ellipse at 92% 10%, rgba(91, 67, 150, .18), transparent 30%),
+        linear-gradient(145deg, #080d1b 0%, #101a31 48%, #0b1020 100%);
+      color: #edf3ff;
+      font-family: 'DM Sans', sans-serif;
+    }
+    h1, h2, h3, [data-testid="stHeading"] {
+      font-family: 'Space Grotesk', sans-serif !important;
+      letter-spacing: -.035em;
+      color: #f4f7ff;
+    }
+    h1 { font-size: clamp(2.3rem, 5vw, 3.8rem) !important; }
+    h2 { color: #dce8ff !important; }
+    [data-testid="stHeader"] { background: rgba(8, 13, 27, .72); }
+    [data-testid="stTabs"] [role="tablist"] {
+      gap: .45rem;
+      border-bottom: 1px solid var(--moon-border);
+    }
+    [data-testid="stTabs"] button[role="tab"] {
+      border-radius: 12px 12px 0 0;
+      padding: .8rem 1rem;
+      color: #b9c8e7;
+      font-weight: 650;
+    }
+    [data-testid="stTabs"] button[aria-selected="true"] {
+      color: var(--moon-cyan) !important;
+      border-bottom: 3px solid var(--moon-cyan) !important;
+      background: rgba(114, 228, 242, .08);
+    }
+    [data-testid="stVerticalBlockBorderWrapper"],
+    [data-testid="stExpander"],
+    [data-testid="stMetric"] {
+      border: 1px solid var(--moon-border);
+      border-radius: 18px;
+      background: var(--moon-panel);
+      box-shadow: 0 12px 36px rgba(0,0,0,.16);
+    }
+    [data-testid="stMetric"] { padding: 1rem; }
+    [data-testid="stMetricLabel"] { color: #aebfe0 !important; }
+    [data-testid="stMetricValue"] { color: #f3f7ff !important; }
+    .stButton > button, .stDownloadButton > button {
+      border: 1px solid rgba(114, 228, 242, .45);
+      border-radius: 12px;
+      background: linear-gradient(110deg, #176d86, #514a9b);
+      color: white;
+      font-weight: 700;
+      padding: .65rem 1.15rem;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .stButton > button:hover, .stDownloadButton > button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(66, 197, 222, .2);
+      border-color: var(--moon-cyan);
+      color: white;
+    }
+    [data-baseweb="select"] > div, [data-baseweb="input"] > div,
+    [data-baseweb="textarea"] > div {
+      background: rgba(17, 27, 49, .9);
+      border-color: var(--moon-border);
+      border-radius: 11px;
+    }
+    [data-testid="stAlert"] { border-radius: 14px; }
+    [data-testid="stPlotlyChart"] {
+      border: 1px solid var(--moon-border);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(14, 23, 43, .7);
+      padding: .25rem;
+    }
+    [data-testid="stCaptionContainer"] { color: #aebbd4; }
+    a { color: #7de5f2 !important; }
+    hr { border-color: var(--moon-border); }
+    @media (max-width: 700px) {
+      [data-testid="stTabs"] button[role="tab"] { padding: .55rem .45rem; font-size: .78rem; }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 PRODUCTS = {
     "Elevation (metres)": ("elevation", "metres"),
     "Slope (degrees)": ("slope", "degrees"),
@@ -366,12 +460,17 @@ with compare_tab:
             st.error("Choose two different study regions.")
         else:
             records = []
+            comparison_previews = []
             try:
-                with st.spinner("Retrieving both NASA products..."):
+                with st.spinner("Retrieving both NASA products and preparing map previews..."):
                     for label in (first_label, second_label):
                         site_id = site_options[label]
                         metadata = download_lola_geotiff(site_id, product)
                         summary = summarize_lola_raster(metadata.path, product)
+                        preview = load_terrain_preview(
+                            metadata.path, units=units, max_dimension=384
+                        )
+                        comparison_previews.append((label, preview))
                         records.append(
                             {
                                 "Region": label,
@@ -394,6 +493,40 @@ with compare_tab:
                 st.error(f"Comparison could not be completed: {exc}")
             else:
                 frame = pd.DataFrame(records)
+                st.subheader("Visual map comparison")
+                st.caption(
+                    "These are sampled 2D maps of the selected NASA raster product. "
+                    "Hover over either map to inspect projected coordinates and values."
+                )
+                map_col1, map_col2 = st.columns(2)
+                for map_col, (region_label, preview) in zip(
+                    (map_col1, map_col2), comparison_previews
+                ):
+                    with map_col:
+                        st.markdown(f"**{region_label}**")
+                        map_figure = build_terrain_heatmap(
+                            preview,
+                            title=f"{region_label} — {compare_product_label}",
+                            colorbar_title=units,
+                        )
+                        map_figure.update_layout(
+                            height=430,
+                            margin={"l": 10, "r": 10, "t": 55, "b": 10},
+                            template="plotly_dark",
+                            paper_bgcolor="rgba(0,0,0,0)",
+                            plot_bgcolor="rgba(8,13,27,0.35)",
+                            font={"color": "#eaf1ff"},
+                        )
+                        st.plotly_chart(
+                            map_figure,
+                            use_container_width=True,
+                            key=f"compare_map_{site_options[region_label]}",
+                        )
+                        st.caption(
+                            f"{preview.sample_width} × {preview.sample_height} sampled pixels · "
+                            f"{preview.valid_pixel_count:,} valid values · {preview.crs_name}"
+                        )
+                st.subheader("Numerical comparison")
                 st.dataframe(frame, use_container_width=True, hide_index=True)
                 fig = px.bar(
                     frame,
