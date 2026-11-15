@@ -3,11 +3,14 @@
 import json
 from datetime import date
 
+import numpy as np
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import rasterio
 import requests
 import streamlit as st
+from rasterio.io import MemoryFile
 
 from moonsight.astronomy.horizons import fetch_lunar_observer_ephemeris
 from moonsight.catalog import LOLA_STUDY_SITES
@@ -33,6 +36,39 @@ PRODUCTS = {
     "Slope uncertainty (degrees)": ("slope_uncertainty", "degrees RMS error"),
 }
 
+NASA_GLOBAL_DEM_URL = (
+    "https://svs.gsfc.nasa.gov/vis/a000000/a004700/a004720/ldem_4.tif"
+)
+MOON_REFERENCE_RADIUS_KM = 1737.4
+
+
+@st.cache_data(ttl=86400, show_spinner=False)
+def load_global_lunar_dem():
+    """Load NASA's low-resolution global LOLA elevation grid for globe viewing."""
+    response = requests.get(NASA_GLOBAL_DEM_URL, timeout=(15, 90))
+    response.raise_for_status()
+    with MemoryFile(response.content) as memory_file:
+        with memory_file.open() as dataset:
+            if dataset.count < 1:
+                raise ValueError("NASA global lunar DEM contains no raster band.")
+            width = min(360, dataset.width)
+            height = min(180, dataset.height)
+            sample = dataset.read(
+                1, out_shape=(height, width), masked=True
+            )
+            elevation_km = np.asarray(sample.filled(np.nan), dtype=np.float64)
+            transform = dataset.transform * rasterio.Affine.scale(
+                dataset.width / width, dataset.height / height
+            )
+            longitude = transform.c + (
+                np.arange(width, dtype=np.float64) + 0.5
+            ) * transform.a
+            latitude = transform.f + (
+                np.arange(height, dtype=np.float64) + 0.5
+            ) * transform.e
+    elevation_km[~np.isfinite(elevation_km)] = np.nan
+    return longitude, latitude, elevation_km
+
 st.title("🌕 MoonSight")
 st.subheader("Lunar Landing Site Navigator")
 st.caption("NASA Space Apps Challenge 2026 · #MoonSightExplorers")
@@ -49,11 +85,142 @@ from JPL Horizons for coordinates that you explicitly enter.
 """
 )
 
-terrain_tab, compare_tab, geometry_tab, sources_tab = st.tabs(
-    ["Terrain explorer", "Compare regions", "Sun & Earth geometry", "Data & limitations"]
+globe_tab, terrain_tab, compare_tab, geometry_tab, sources_tab = st.tabs(
+    [
+        "🌕 3D lunar globe",
+        "Terrain explorer",
+        "Compare regions",
+        "Sun & Earth geometry",
+        "Data & limitations",
+    ]
 )
 
 site_options = {f"{site.site_id} — {site.name}": site.site_id for site in LOLA_STUDY_SITES}
+
+with globe_tab:
+    st.header("Interactive global Moon — LOLA topography")
+    st.write(
+        "Rotate, zoom and inspect a three-dimensional model of the whole Moon. "
+        "This global view provides geographic context; use the Terrain explorer "
+        "for the much finer south-polar study tiles."
+    )
+    globe_col1, globe_col2 = st.columns([1, 2])
+    with globe_col1:
+        vertical_exaggeration = st.slider(
+            "Terrain vertical exaggeration",
+            min_value=1.0,
+            max_value=8.0,
+            value=2.0,
+            step=0.5,
+            help="Visual aid only. The default 1× uses the source elevation scale.",
+        )
+        globe_colors = st.selectbox(
+            "Elevation colour palette",
+            ["Earth", "Viridis", "Cividis", "Turbo", "Plasma"],
+            index=0,
+        )
+        st.caption(
+            "Global context grid: NASA LOLA 4 pixels per degree. This is a "
+            "coarse global model, not the 5 m/pixel south-pole products."
+        )
+        st.markdown(
+            "[NASA CGI Moon Kit — source data and credits]"
+            "(https://svs.gsfc.nasa.gov/4720/)"
+        )
+        st.markdown(
+            "[Open NASA Moon Trek for detailed map layers]"
+            "(https://trek.nasa.gov/moon/)"
+        )
+    try:
+        with st.spinner("Loading NASA's global LOLA elevation map..."):
+            longitude, latitude, elevation_km = load_global_lunar_dem()
+    except (requests.RequestException, rasterio.errors.RasterioError, ValueError) as exc:
+        st.error(f"The global lunar DEM could not be loaded: {exc}")
+        st.info(
+            "You can still use the Terrain explorer to download the individual "
+            "NASA south-pole LOLA GeoTIFF products."
+        )
+    else:
+        lon_grid, lat_grid = np.meshgrid(longitude, latitude)
+        radius_km = MOON_REFERENCE_RADIUS_KM + (
+            elevation_km * vertical_exaggeration
+        )
+        lat_rad = np.radians(lat_grid)
+        lon_rad = np.radians(lon_grid)
+        x_globe = radius_km * np.cos(lat_rad) * np.cos(lon_rad)
+        y_globe = radius_km * np.cos(lat_rad) * np.sin(lon_rad)
+        z_globe = radius_km * np.sin(lat_rad)
+        color_scales = {
+            "Earth": [
+                [0.0, "#243b6b"],
+                [0.25, "#657b8e"],
+                [0.5, "#a99c83"],
+                [0.75, "#d4c9ad"],
+                [1.0, "#f4eee0"],
+            ],
+            "Viridis": "Viridis",
+            "Cividis": "Cividis",
+            "Turbo": "Turbo",
+            "Plasma": "Plasma",
+        }
+        globe = go.Figure(
+            data=[
+                go.Surface(
+                    x=x_globe,
+                    y=y_globe,
+                    z=z_globe,
+                    surfacecolor=elevation_km,
+                    colorscale=color_scales[globe_colors],
+                    colorbar={"title": "Elevation (km)"},
+                    connectgaps=False,
+                    lighting={
+                        "ambient": 0.45,
+                        "diffuse": 0.75,
+                        "specular": 0.15,
+                        "roughness": 0.85,
+                        "fresnel": 0.1,
+                    },
+                    lightposition={"x": 1000, "y": 1500, "z": 2000},
+                    hovertemplate=(
+                        "Longitude: %{customdata[0]:.1f}°<br>"
+                        "Latitude: %{customdata[1]:.1f}°<br>"
+                        "Elevation: %{surfacecolor:.2f} km"
+                        "<extra>NASA LOLA</extra>"
+                    ),
+                    customdata=np.dstack((lon_grid, lat_grid)),
+                )
+            ]
+        )
+        globe.update_layout(
+            height=680,
+            margin={"l": 0, "r": 0, "t": 35, "b": 0},
+            title="Moon — global LOLA elevation model",
+            scene={
+                "xaxis": {"visible": False},
+                "yaxis": {"visible": False},
+                "zaxis": {"visible": False},
+                "aspectmode": "data",
+                "camera": {"eye": {"x": 1.6, "y": 1.6, "z": 1.1}},
+            },
+        )
+        st.plotly_chart(
+            globe,
+            use_container_width=True,
+            key="global_lunar_globe",
+            config={"scrollZoom": True, "displaylogo": False},
+        )
+        st.caption(
+            f"Displayed grid: {len(latitude)} latitude rows × "
+            f"{len(longitude)} longitude columns. Elevation source values are "
+            "kilometres relative to NASA's 1,737.4 km reference sphere. "
+            "Vertical exaggeration changes the displayed shape only."
+        )
+        st.info(
+            "This is a global-scale context globe, not a 5 m/pixel terrain model. "
+            "The named Site01–Site23 study-region products are not pinned to this "
+            "globe because their exact coordinates have not been verified in the "
+            "project catalog. No landing-safety judgement is made."
+        )
 
 with terrain_tab:
     st.header("NASA LOLA terrain explorer")
