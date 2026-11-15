@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 import rasterio
 import requests
 import streamlit as st
+from affine import Affine
 from rasterio.io import MemoryFile
 
 from moonsight.astronomy.horizons import fetch_lunar_observer_ephemeris
@@ -57,7 +58,7 @@ def load_global_lunar_dem():
                 1, out_shape=(height, width), masked=True
             )
             elevation_km = np.asarray(sample.filled(np.nan), dtype=np.float64)
-            transform = dataset.transform * rasterio.Affine.scale(
+            transform = dataset.transform * Affine.scale(
                 dataset.width / width, dataset.height / height
             )
             longitude = transform.c + (
