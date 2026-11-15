@@ -184,10 +184,10 @@ with globe_tab:
                     hovertemplate=(
                         "Longitude: %{customdata[0]:.1f}°<br>"
                         "Latitude: %{customdata[1]:.1f}°<br>"
-                        "Elevation: %{surfacecolor:.2f} km"
+                        "Elevation: %{customdata[2]:.2f} km"
                         "<extra>NASA LOLA</extra>"
                     ),
-                    customdata=np.dstack((lon_grid, lat_grid)),
+                    customdata=np.dstack((lon_grid, lat_grid, elevation_km)),
                 )
             ]
         )
