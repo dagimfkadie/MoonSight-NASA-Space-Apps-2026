@@ -34,6 +34,26 @@ The official 2026 event is November 14–15, 2026. The official site states that
 
 Official event: https://www.spaceappschallenge.org/2026/
 
+## Deploy the Streamlit app
+
+MoonSight is a Python Streamlit application. **Deploy it with Streamlit Community Cloud**, not Cloudflare Pages' static-site deployment workflow.
+
+1. Open https://share.streamlit.io/ and sign in with the GitHub account that has admin access to this public repository.
+2. Select **Create app** → **Yup, I have an app**.
+3. Enter:
+   - Repository: `dagimfkadie/MoonSight-NASA-Space-Apps-2026`
+   - Branch: `main`
+   - Main file path: `app.py`
+4. In **Advanced settings**, choose **Python 3.11** to match the version used by the repository's CI workflow.
+5. Leave Secrets empty; this prototype does not require API keys.
+6. Select **Deploy** and wait for the build logs to finish. The public app URL will end in `.streamlit.app`.
+
+The root `requirements.txt` declares the app dependencies and installs the `src/` package with `-e .`. Do not add a Cloudflare Pages build command such as `npx wrangler deploy`; that command does not start a Streamlit server.
+
+If the build fails, open the app's **Manage app → Logs** panel and inspect the first traceback or package-install error. Do not change the Python version or dependencies blindly; use the first actual error as the basis for a fix.
+
+Deployment documentation: https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/deploy
+
 ## Technology
 
 Python 3.10+, Streamlit, NumPy, Pandas, Rasterio, Plotly, Requests, pytest and Ruff.
